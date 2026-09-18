@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -336,11 +336,23 @@ namespace AntivirusHashManager
 
         /// <summary>
         /// 1M kaydı GitHub Pages ve antivirüs istemcileri için optimize edilmiş JSON formatında kaydeder.
+        /// Otomatik .bak yedeği oluşturur.
         /// </summary>
         public void ExportToJson(string filePath)
         {
             lock (_lockObj)
             {
+                // Önceki dosyanın güvenli yedeğini al
+                try
+                {
+                    if (File.Exists(filePath))
+                    {
+                        string bakPath = filePath + ".bak";
+                        File.Copy(filePath, bakPath, true);
+                    }
+                }
+                catch { }
+
                 using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 65536))
                 using (var writer = new StreamWriter(fs, Encoding.UTF8))
                 {

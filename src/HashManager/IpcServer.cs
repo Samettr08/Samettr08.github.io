@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
@@ -63,7 +63,7 @@ namespace AntivirusHashManager
                         PipeDirection.InOut,
                         NamedPipeServerStream.MaxAllowedServerInstances,
                         PipeTransmissionMode.Byte,
-                        PipeOptions.Asynchronous))
+                        PipeOptions.None))
                     {
                         pipeServer.WaitForConnection();
 

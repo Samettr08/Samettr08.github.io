@@ -16,10 +16,12 @@ namespace AntivirusHashManager
         private readonly DatabaseEngine _db = new DatabaseEngine();
         private readonly GitHubSync _ghSync = new GitHubSync();
         private IpcServer _ipcServer;
+        private HttpApiServer _httpServer;
+        private ThreatFeedManager _feedManager;
 
         // UI Bileşenleri
         private TabControl tabControl;
-        private TabPage tabDatabase, tabAuto, tabGitHub, tabScanner, tabIpc;
+        private TabPage tabDatabase, tabFeeds, tabAuto, tabGitHub, tabScanner, tabIpc;
         
         // Veritabanı Sekmesi
         private ListView lvSignatures;
@@ -27,6 +29,13 @@ namespace AntivirusHashManager
         private Button btnAdd, btnDelete, btnClear, btnImportTxt, btnImportJson, btnExportJson, btnExportTxt;
         private ProgressBar progressBar;
         private Label lblStats;
+
+        // Canlı Beslemeler (Threat Feeds & Folder Crawler) Sekmesi
+        private Button btnFetchBazaar, btnCrawlFolder;
+        private TextBox txtCrawlFolder, txtCrawlLabel;
+        private CheckBox chkAutoFetchFeeds;
+        private System.Windows.Forms.Timer _feedTimer;
+        private RichTextBox rtbFeedsLog;
 
         // Otomatik İzleyici Sekmesi
         private TextBox txtWatchFile;
@@ -49,9 +58,12 @@ namespace AntivirusHashManager
         private Label lblScanVerdict;
         private Button btnSelectFile, btnAddScannedHash;
 
-        // IPC Sekmesi
+        // IPC & HTTP Sekmesi
         private RichTextBox rtbIpcLog;
-        private Button btnTestIpc, btnClearIpcLog;
+        private Button btnTestIpc, btnClearIpcLog, btnTestHttp;
+
+        // Tray Icon
+        private NotifyIcon notifyIcon;
 
         // Durum Çubuğu
         private StatusStrip statusStrip;
@@ -62,30 +74,30 @@ namespace AntivirusHashManager
             InitializeRetroComponents();
             InitializeEngine();
             InitializeAutoWatchers();
+            InitializeTrayIcon();
         }
 
         private void InitializeRetroComponents()
         {
-            // Form Ayarları (Retro Windows XP Luna Look)
-            this.Text = "SAMET-AV THREAT INTELLIGENCE | HASH DATABASE STUDIO v1.0 (Windows XP Luna)";
-            this.Size = new Size(920, 680);
-            this.MinimumSize = new Size(820, 580);
+            this.Text = "SAMET-AV THREAT INTELLIGENCE | ADVANCED HASH STUDIO v2.0 (Windows XP Luna)";
+            this.Size = new Size(960, 700);
+            this.MinimumSize = new Size(840, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
-            this.BackColor = Color.FromArgb(236, 233, 216); // Classic Windows XP Dialog Color
+            this.BackColor = Color.FromArgb(236, 233, 216);
 
-            // Üst Başlık Bannerı (Windows XP Luna Blue)
+            // Başlık Bannerı (XP Luna Blue)
             Panel headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 54,
+                Height = 56,
                 BackColor = Color.FromArgb(0, 85, 234),
                 Padding = new Padding(12, 6, 12, 6)
             };
 
             Label lblHeaderTitle = new Label
             {
-                Text = "🛡️ SAMET-AV SIGNATURE STUDIO & THREAT DATABASE",
+                Text = "☁️ SAMET-AV MERKEZİ BULUT İMZA YARDIMCISI (CLOUD HASH STUDIO v2.0)",
                 Font = new Font("Tahoma", 11.0f, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = true,
@@ -94,11 +106,11 @@ namespace AntivirusHashManager
 
             Label lblHeaderSub = new Label
             {
-                Text = "1M+ Hash Otomatik Kaydetme & İzleme • Anında Diske Yazma • GitHub Pages Senkronizasyon",
+                Text = "Merkezi Bulut Dağıtım İstasyonu • İşlenen Her Hash Anında samettr08.github.io Bulutuna Gönderilir",
                 Font = new Font("Tahoma", 8.0f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(220, 235, 255),
                 AutoSize = true,
-                Location = new Point(14, 30)
+                Location = new Point(14, 31)
             };
 
             headerPanel.Controls.Add(lblHeaderTitle);
@@ -110,23 +122,25 @@ namespace AntivirusHashManager
             {
                 Dock = DockStyle.Fill,
                 Font = new Font("Tahoma", 8.5f, FontStyle.Bold),
-                Padding = new Point(12, 5)
+                Padding = new Point(10, 5)
             };
 
-            // Sekmeleri Oluştur
             tabDatabase = new TabPage("📋 İmza Veritabanı");
-            tabAuto = new TabPage("⚡ Otomatik Hash İzleyici");
+            tabFeeds = new TabPage("🌐 Canlı Tehdit Beslemeleri");
+            tabAuto = new TabPage("⚡ Otomatik İzleyici");
             tabGitHub = new TabPage("☁️ GitHub Pages Sync");
             tabScanner = new TabPage("🔍 Dosya Analiz & Tara");
-            tabIpc = new TabPage("📡 EXE Haberleşme (IPC)");
+            tabIpc = new TabPage("📡 İstemci API & IPC");
 
             BuildDatabaseTab();
+            BuildFeedsTab();
             BuildAutoTab();
             BuildGitHubTab();
             BuildScannerTab();
             BuildIpcTab();
 
             tabControl.TabPages.Add(tabDatabase);
+            tabControl.TabPages.Add(tabFeeds);
             tabControl.TabPages.Add(tabAuto);
             tabControl.TabPages.Add(tabGitHub);
             tabControl.TabPages.Add(tabScanner);
@@ -139,8 +153,8 @@ namespace AntivirusHashManager
             statusStrip = new StatusStrip { BackColor = Color.FromArgb(236, 233, 216) };
             lblStatusTotal = new ToolStripStatusLabel("Toplam İmza: 0") { BorderSides = ToolStripStatusLabelBorderSides.Right };
             lblStatusVisible = new ToolStripStatusLabel("Görüntülenen: 0") { BorderSides = ToolStripStatusLabelBorderSides.Right };
-            lblStatusAuto = new ToolStripStatusLabel("Otomatik Kayıt: AKTİF") { BorderSides = ToolStripStatusLabelBorderSides.Right, ForeColor = Color.DarkGreen };
-            lblStatusIpc = new ToolStripStatusLabel("IPC: \\\\.\\pipe\\AntivirusHashPipe") { Spring = true, TextAlign = ContentAlignment.MiddleRight };
+            lblStatusAuto = new ToolStripStatusLabel("Kayıt: ANINDA DİSKE (AKTİF)") { BorderSides = ToolStripStatusLabelBorderSides.Right, ForeColor = Color.DarkGreen };
+            lblStatusIpc = new ToolStripStatusLabel("IPC & HTTP API: Dinliyor (:8765)") { Spring = true, TextAlign = ContentAlignment.MiddleRight };
 
             statusStrip.Items.AddRange(new ToolStripItem[] { lblStatusTotal, lblStatusVisible, lblStatusAuto, lblStatusIpc });
             this.Controls.Add(statusStrip);
@@ -153,25 +167,24 @@ namespace AntivirusHashManager
             tabDatabase.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
             tabDatabase.BackColor = Color.FromArgb(236, 233, 216);
 
-            // 1. Manuel Ekleme Kutusu (Windows XP Tarzı)
             GroupBox gbAdd = new GroupBox
             {
-                Text = "🛡️ Yeni SHA-256 İmza Ekleme İstasyonu (Otomatik Kalıcı Kaydeder)",
+                Text = "🛡️ Yeni SHA-256 / MD5 İmza Ekleme İstasyonu (Otomatik Diske Kaydeder)",
                 Dock = DockStyle.Top,
                 Height = 70,
                 Padding = new Padding(8)
             };
 
             Label lblH = new Label { Text = "Eklenecek SHA:", AutoSize = true, Location = new Point(12, 26), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
-            txtHash = new TextBox { Location = new Point(105, 23), Width = 310, Font = new Font("Consolas", 8.5f) };
+            txtHash = new TextBox { Location = new Point(110, 23), Width = 320, Font = new Font("Consolas", 8.5f) };
 
-            Label lblT = new Label { Text = "Tehdit Tanımı:", AutoSize = true, Location = new Point(425, 26), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
-            txtThreatName = new TextBox { Location = new Point(508, 23), Width = 150, Text = "Trojan.Win32.PufaAv.Generic" };
+            Label lblT = new Label { Text = "Tehdit Tanımı:", AutoSize = true, Location = new Point(440, 26), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
+            txtThreatName = new TextBox { Location = new Point(525, 23), Width = 155, Text = "Trojan.Win32.PufaAv.Generic" };
 
             btnAdd = new Button
             {
                 Text = "➕ SHA'yı Ekle",
-                Location = new Point(668, 21),
+                Location = new Point(690, 21),
                 Width = 110,
                 Height = 26,
                 Font = new Font("Tahoma", 8.25f, FontStyle.Bold),
@@ -181,14 +194,7 @@ namespace AntivirusHashManager
 
             gbAdd.Controls.AddRange(new Control[] { lblH, txtHash, lblT, txtThreatName, btnAdd });
 
-            // 2. Arama ve Filtreleme Çubuğu
-            Panel searchPanel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 35,
-                Padding = new Padding(4)
-            };
-
+            Panel searchPanel = new Panel { Dock = DockStyle.Top, Height = 35, Padding = new Padding(4) };
             Label lblS = new Label { Text = "🔍 Hızlı Ara (O(1)):", AutoSize = true, Location = new Point(12, 9), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
             txtSearch = new TextBox { Location = new Point(135, 6), Width = 300, Font = new Font("Consolas", 8.5f) };
             txtSearch.TextChanged += (s, e) => SearchDatabase(txtSearch.Text);
@@ -200,10 +206,8 @@ namespace AntivirusHashManager
                 Location = new Point(450, 9),
                 ForeColor = Color.DarkSlateGray
             };
-
             searchPanel.Controls.AddRange(new Control[] { lblS, txtSearch, lblStats });
 
-            // 3. VirtualMode ListView
             lvSignatures = new ListView
             {
                 Dock = DockStyle.Fill,
@@ -215,29 +219,16 @@ namespace AntivirusHashManager
             };
 
             lvSignatures.Columns.Add("#", 60);
-            lvSignatures.Columns.Add("Hash (SHA256 / MD5)", 430);
-            lvSignatures.Columns.Add("Zararlı Tanımı (Threat Name)", 260);
+            lvSignatures.Columns.Add("Hash (SHA256 / MD5)", 440);
+            lvSignatures.Columns.Add("Zararlı Tanımı (Threat Name)", 270);
 
             lvSignatures.RetrieveVirtualItem += LvSignatures_RetrieveVirtualItem;
             lvSignatures.KeyDown += LvSignatures_KeyDown;
 
-            // 4. Alt Butonlar ve İlerleme Çubuğu
-            Panel bottomPanel = new Panel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 72,
-                Padding = new Padding(6)
-            };
-
-            progressBar = new ProgressBar
-            {
-                Dock = DockStyle.Top,
-                Height = 14,
-                Visible = false
-            };
+            Panel bottomPanel = new Panel { Dock = DockStyle.Bottom, Height = 72, Padding = new Padding(6) };
+            progressBar = new ProgressBar { Dock = DockStyle.Top, Height = 14, Visible = false };
 
             Panel btnPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(2) };
-
             btnImportTxt = new Button { Text = "📂 Toplu TXT İçe Aktar", Size = new Size(140, 30), Location = new Point(6, 12), Cursor = Cursors.Hand };
             btnImportTxt.Click += async (s, e) => await ImportTxtAsync();
 
@@ -280,22 +271,188 @@ namespace AntivirusHashManager
 
         private void LvSignatures_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            if (e.KeyCode == Keys.Delete) DeleteSelected();
+        }
+
+        #endregion
+
+        #region TAB 2: Canlı Tehdit Beslemeleri (Threat Feeds & Folder Crawler)
+
+        private void BuildFeedsTab()
+        {
+            tabFeeds.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
+            tabFeeds.BackColor = Color.FromArgb(236, 233, 216);
+
+            // 1. Canlı Küresel İstihbarat Besleyicisi
+            GroupBox gbBazaar = new GroupBox
             {
-                DeleteSelected();
+                Text = "🌐 Canlı Küresel Siber Tehdit İstihbaratı (MalwareBazaar abuse.ch)",
+                Dock = DockStyle.Top,
+                Height = 110,
+                Padding = new Padding(12)
+            };
+
+            btnFetchBazaar = new Button
+            {
+                Text = "⚡ Canlı Tehditleri Şimdi İndir & Veritabanına Ekle (Son 24-48 Saat)",
+                Location = new Point(14, 25),
+                Width = 430,
+                Height = 32,
+                BackColor = Color.FromArgb(0, 100, 0),
+                ForeColor = Color.White,
+                Font = new Font("Tahoma", 8.5f, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnFetchBazaar.Click += async (s, e) => await FetchLiveFeedAsync();
+
+            chkAutoFetchFeeds = new CheckBox
+            {
+                Text = "🕒 Her 2 Saatte Bir Arka Planda Otomatik Canlı Tehditleri Çek & Veritabanına Ekle",
+                Location = new Point(16, 68),
+                AutoSize = true,
+                Font = new Font("Tahoma", 8.25f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(0, 50, 140)
+            };
+            chkAutoFetchFeeds.CheckedChanged += (s, e) =>
+            {
+                if (chkAutoFetchFeeds.Checked)
+                {
+                    _feedTimer.Start();
+                    LogFeed("🕒 Periyodik Canlı Besleme Kontrolü Başlatıldı (2 Saat).");
+                }
+                else
+                {
+                    _feedTimer.Stop();
+                    LogFeed("🕒 Periyodik Besleme Durduruldu.");
+                }
+            };
+
+            gbBazaar.Controls.AddRange(new Control[] { btnFetchBazaar, chkAutoFetchFeeds });
+
+            // 2. Klasör & Karantina Otomatik Tarayıcı
+            GroupBox gbCrawler = new GroupBox
+            {
+                Text = "📁 Şüpheli Klasör / Karantina Otomatik Hash Çıkarıcı (Folder Crawler)",
+                Dock = DockStyle.Top,
+                Height = 100,
+                Padding = new Padding(12)
+            };
+
+            Label lCrawl = new Label { Text = "Hedef Klasör:", Location = new Point(14, 26), AutoSize = true, Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
+            txtCrawlFolder = new TextBox { Location = new Point(110, 23), Width = 400, Text = @"C:\Users\altan\Desktop\PufaAv\build" };
+
+            Button btnSelectCrawl = new Button { Text = "Gözat...", Location = new Point(520, 22), Width = 80, Height = 24 };
+            btnSelectCrawl.Click += (s, e) =>
+            {
+                using (var fbd = new FolderBrowserDialog { Description = "Taranacak Şüpheli Klasörü Seçin" })
+                {
+                    if (fbd.ShowDialog() == DialogResult.OK) txtCrawlFolder.Text = fbd.SelectedPath;
+                }
+            };
+
+            Label lLabel = new Label { Text = "Tehdit Etiketi:", Location = new Point(14, 60), AutoSize = true };
+            txtCrawlLabel = new TextBox { Location = new Point(110, 57), Width = 220, Text = "Suspicious.LocalSample" };
+
+            btnCrawlFolder = new Button
+            {
+                Text = "🚀 Klasörü Tara & Tüm SHA-256'ları Veritabanına Ekle",
+                Location = new Point(345, 55),
+                Width = 330,
+                Height = 28,
+                Font = new Font("Tahoma", 8.25f, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnCrawlFolder.Click += async (s, e) => await CrawlFolderAsync();
+
+            gbCrawler.Controls.AddRange(new Control[] { lCrawl, txtCrawlFolder, btnSelectCrawl, lLabel, txtCrawlLabel, btnCrawlFolder });
+
+            // 3. Günlük Terminali
+            GroupBox gbLog = new GroupBox { Text = "📡 Tehdit İstihbarat & Tarama Günlüğü", Dock = DockStyle.Fill, Padding = new Padding(8) };
+            rtbFeedsLog = new RichTextBox
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(10, 15, 22),
+                ForeColor = Color.FromArgb(50, 255, 50),
+                Font = new Font("Consolas", 9.0f),
+                ReadOnly = true
+            };
+            gbLog.Controls.Add(rtbFeedsLog);
+
+            tabFeeds.Controls.Add(gbLog);
+            tabFeeds.Controls.Add(gbCrawler);
+            tabFeeds.Controls.Add(gbBazaar);
+        }
+
+        private async Task FetchLiveFeedAsync()
+        {
+            btnFetchBazaar.Enabled = false;
+            btnFetchBazaar.Text = "⏳ Canlı Tehditler İndiriliyor...";
+
+            FeedFetchResult res = null;
+            await Task.Run(() =>
+            {
+                res = _feedManager.FetchMalwareBazaarRecent(LogFeed);
+            });
+
+            btnFetchBazaar.Enabled = true;
+            btnFetchBazaar.Text = "⚡ Canlı Tehditleri Şimdi İndir & Veritabanına Ekle (Son 24-48 Saat)";
+
+            UpdateListCount();
+            AutoSaveDatabase();
+
+            MessageBox.Show(res.Message, "Tehdit Beslemesi", MessageBoxButtons.OK, res.Success ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+        }
+
+        private async Task CrawlFolderAsync()
+        {
+            string path = txtCrawlFolder.Text.Trim();
+            string label = txtCrawlLabel.Text.Trim();
+
+            if (!Directory.Exists(path))
+            {
+                MessageBox.Show("Belirtilen klasör bulunamadı:\n" + path, "Klasör Hatası", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            btnCrawlFolder.Enabled = false;
+            btnCrawlFolder.Text = "⏳ Dosyalar Taranıyor & SHA Hesaplanıyor...";
+
+            FolderCrawlResult res = null;
+            await Task.Run(() =>
+            {
+                res = _feedManager.CrawlFolderAndHash(path, label, LogFeed);
+            });
+
+            btnCrawlFolder.Enabled = true;
+            btnCrawlFolder.Text = "🚀 Klasörü Tara & Tüm SHA-256'ları Veritabanına Ekle";
+
+            UpdateListCount();
+            AutoSaveDatabase();
+
+            MessageBox.Show(res.Message, "Klasör Taraması Bitti", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void LogFeed(string msg)
+        {
+            if (this.IsHandleCreated)
+            {
+                this.BeginInvoke(new Action(() =>
+                {
+                    rtbFeedsLog.AppendText(string.Format("[{0}] {1}\n", DateTime.Now.ToString("HH:mm:ss"), msg));
+                    rtbFeedsLog.ScrollToCaret();
+                }));
             }
         }
 
         #endregion
 
-        #region TAB 2: Otomatik Hash İzleyici & Ekleyici
+        #region TAB 3: Otomatik İzleyici
 
         private void BuildAutoTab()
         {
             tabAuto.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
             tabAuto.BackColor = Color.FromArgb(236, 233, 216);
 
-            // 1. Canlı Dosya İzleyici Grubu
             GroupBox gbWatcher = new GroupBox
             {
                 Text = "📁 İmza Dosyası Canlı İzleme (Dosya Değiştikçe Otomatik Ekler)",
@@ -334,7 +491,6 @@ namespace AntivirusHashManager
 
             gbWatcher.Controls.AddRange(new Control[] { lblW, txtWatchFile, btnSelectWatchFile, chkWatchFile });
 
-            // 2. Diğer Otomasyon Ayarları
             GroupBox gbOptions = new GroupBox
             {
                 Text = "⚙️ Akıllı Otomatik Yakalama & Senkronizasyon",
@@ -354,16 +510,16 @@ namespace AntivirusHashManager
 
             chkAutoPush = new CheckBox
             {
-                Text = "🚀 Yeni Hash Eklendiğinde Otomatik Olarak GitHub Pages'e Yükle (Auto-Push)",
+                Text = "☁️ Her İşlemde Otomatik Olarak samettr08.github.io Bulut Veritabanına Yükle (Auto-Cloud Push)",
                 Location = new Point(16, 52),
                 AutoSize = true,
+                Checked = true, // VARSAYILAN OLARAK HER ZAMAN AÇIK!
                 Font = new Font("Tahoma", 8.25f, FontStyle.Bold),
                 ForeColor = Color.DarkGreen
             };
 
             gbOptions.Controls.AddRange(new Control[] { chkWatchClipboard, chkAutoPush });
 
-            // 3. Otomatik İşlem Terminal Günlüğü
             GroupBox gbLog = new GroupBox
             {
                 Text = "📡 Otomatik Ekleme ve Olay Günlüğü",
@@ -389,7 +545,7 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region TAB 3: GitHub Pages Senkronizasyonu
+        #region TAB 4: GitHub Pages Senkronizasyonu
 
         private void BuildGitHubTab()
         {
@@ -459,7 +615,7 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region TAB 4: Scanner (Dosya Hash & Analiz)
+        #region TAB 5: Scanner (Dosya Analiz & Tara)
 
         private void BuildScannerTab()
         {
@@ -523,29 +679,32 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region TAB 5: IPC Monitörü
+        #region TAB 6: IPC & Local Micro-REST API
 
         private void BuildIpcTab()
         {
             tabIpc.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
             tabIpc.BackColor = Color.FromArgb(236, 233, 216);
 
-            Panel topPanel = new Panel { Dock = DockStyle.Top, Height = 55, Padding = new Padding(8) };
+            Panel topPanel = new Panel { Dock = DockStyle.Top, Height = 65, Padding = new Padding(8) };
             Label lblIpcInfo = new Label
             {
-                Text = "📡 Named Pipe: \\\\.\\pipe\\AntivirusHashPipe  (Diğer antivirüs EXE'leriniz buradan milisaniyede sorgu yapar)",
-                Location = new Point(12, 10),
+                Text = "📡 Named Pipe: \\\\.\\pipe\\AntivirusHashPipe  |  🌐 Yerel HTTP API: http://127.0.0.1:8765/check?hash=...",
+                Location = new Point(12, 8),
                 AutoSize = true,
                 Font = new Font("Tahoma", 8.5f, FontStyle.Bold)
             };
 
-            btnTestIpc = new Button { Text = "🧪 Kendine Test Ping'i Gönder", Location = new Point(12, 28), Width = 180, Height = 24, Cursor = Cursors.Hand };
+            btnTestIpc = new Button { Text = "🧪 Named Pipe Ping Testi", Location = new Point(12, 30), Width = 170, Height = 25, Cursor = Cursors.Hand };
             btnTestIpc.Click += (s, e) => TestIpcLoopback();
 
-            btnClearIpcLog = new Button { Text = "Günlüğü Temizle", Location = new Point(200, 28), Width = 110, Height = 24 };
+            btnTestHttp = new Button { Text = "🌐 HTTP API Testi Yap", Location = new Point(190, 30), Width = 150, Height = 25, Cursor = Cursors.Hand };
+            btnTestHttp.Click += (s, e) => TestHttpApi();
+
+            btnClearIpcLog = new Button { Text = "Günlüğü Temizle", Location = new Point(350, 30), Width = 110, Height = 25 };
             btnClearIpcLog.Click += (s, e) => rtbIpcLog.Clear();
 
-            topPanel.Controls.AddRange(new Control[] { lblIpcInfo, btnTestIpc, btnClearIpcLog });
+            topPanel.Controls.AddRange(new Control[] { lblIpcInfo, btnTestIpc, btnTestHttp, btnClearIpcLog });
 
             rtbIpcLog = new RichTextBox
             {
@@ -562,55 +721,77 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region Motor Başlatma & Otomatik Kayıt (Auto-Save)
+        #region Motor Başlatma & Kalıcılık (Auto-Save)
 
         private void InitializeEngine()
         {
-            // Varsa başlangıç database.json dosyasını yükle
+            _feedManager = new ThreatFeedManager(_db);
+
+            // Bulut Öncelikli: Başlangıçta her zaman canlı samettr08.github.io bulut veritabanını çek
             string defaultDbPath = GetDatabasePath();
-            if (File.Exists(defaultDbPath))
+            bool loadedFromCloud = false;
+            try
             {
-                _db.LoadFromJson(defaultDbPath);
-            }
-            else
-            {
-                // Tek Taşınabilir (Portable) Mod: Yerel dosya yoksa canlı GitHub Pages'ten otomatik indir
-                try
+                System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
+                using (var wc = new System.Net.WebClient { Encoding = Encoding.UTF8 })
                 {
-                    System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072; // Tls12
-                    using (var wc = new System.Net.WebClient { Encoding = Encoding.UTF8 })
+                    string json = wc.DownloadString("https://samettr08.github.io/database.json");
+                    if (!string.IsNullOrEmpty(json))
                     {
-                        string json = wc.DownloadString("https://samettr08.github.io/database.json");
                         File.WriteAllText(defaultDbPath, json, Encoding.UTF8);
                         _db.LoadFromJson(defaultDbPath);
+                        loadedFromCloud = true;
                     }
                 }
-                catch { }
+            }
+            catch { }
+
+            if (!loadedFromCloud && File.Exists(defaultDbPath))
+            {
+                _db.LoadFromJson(defaultDbPath);
             }
 
             UpdateListCount();
 
-            // IPC Sunucusunu Başlat
+            // Named Pipe IPC Başlat
             try
             {
                 _ipcServer = new IpcServer(_db);
-                _ipcServer.OnLog += msg =>
-                {
-                    if (this.IsHandleCreated)
-                    {
-                        this.BeginInvoke(new Action(() =>
-                        {
-                            rtbIpcLog.AppendText(msg + Environment.NewLine);
-                            rtbIpcLog.ScrollToCaret();
-                        }));
-                    }
-                };
+                _ipcServer.OnLog += msg => LogIpc(msg);
                 _ipcServer.Start();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("IPC Sunucusu başlatılamadı: " + ex.Message, "IPC Hatası", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LogIpc("IPC Hatası: " + ex.Message);
             }
+
+            // HTTP Micro-REST API Başlat (:8765)
+            try
+            {
+                _httpServer = new HttpApiServer(_db, () =>
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        UpdateListCount();
+                        AutoSaveDatabase();
+                    }));
+                }, 8765);
+
+                _httpServer.OnLog += msg => LogIpc(msg);
+                _httpServer.Start();
+            }
+            catch (Exception ex)
+            {
+                LogIpc("HTTP API Hatası: " + ex.Message);
+            }
+
+            // Otomatik Besleme Kontrolü Timer'ı (2 saat = 7200000 ms)
+            _feedTimer = new System.Windows.Forms.Timer { Interval = 7200000 };
+            _feedTimer.Tick += async (s, e) =>
+            {
+                LogFeed("🕒 Zamanlanmış Canlı Besleme Kontrolü Çalışıyor...");
+                await FetchLiveFeedAsync();
+            };
         }
 
         private string GetDatabasePath()
@@ -618,10 +799,6 @@ namespace AntivirusHashManager
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.json");
         }
 
-        /// <summary>
-        /// Her hash eklendiğinde/silindiğinde database.json dosyasını hemen yerel diske yazar.
-        /// Böylece program kapatılıp açılsa (restart) veya F5 atılsa bile hiçbir veri kaybolmaz!
-        /// </summary>
         private void AutoSaveDatabase()
         {
             try
@@ -629,9 +806,9 @@ namespace AntivirusHashManager
                 string dbPath = GetDatabasePath();
                 _db.ExportToJson(dbPath);
 
-                if (chkAutoPush != null && chkAutoPush.Checked)
+                // Her işlemde samettr08.github.io bulut veritabanına otomatik commit et!
+                if (chkAutoPush == null || chkAutoPush.Checked)
                 {
-                    // Arka planda sessizce GitHub'a push et
                     Task.Run(() => SilentGitHubPush());
                 }
             }
@@ -699,13 +876,13 @@ namespace AntivirusHashManager
                 txtHash.Clear();
                 UpdateListCount();
                 AutoSaveDatabase();
-                MessageBox.Show("İmza başarıyla eklendi ve database.json dosyasına KALICI OLARAK kaydedildi.", "Başarılı & Kaydedildi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("İmza başarıyla eklendi!\n\n☁️ samettr08.github.io bulut veritabanına otomatik aktarılıyor.\nDiğer bilgisayarlardaki antivirüsler güncellemeyi doğrudan buradan alacaktır.", "Bulut Veritabanına Eklendi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 UpdateListCount();
                 AutoSaveDatabase();
-                MessageBox.Show("Bu hash zaten veritabanında vardı, tehdit tanımı güncellendi ve kaydedildi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Bu hash zaten veritabanında vardı, tehdit tanımı güncellendi ve buluta aktarılıyor.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -783,7 +960,7 @@ namespace AntivirusHashManager
                 btnImportTxt.Enabled = true;
 
                 UpdateListCount();
-                AutoSaveDatabase(); // İçe aktarma biter bitmez kalıcı kaydet!
+                AutoSaveDatabase();
 
                 MessageBox.Show(string.Format(
                     "Toplu içe aktarma tamamlandı ve database.json dosyasına kaydedildi!\n\n" +
@@ -835,11 +1012,10 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region OTOMATİK İZLEYİCİLER (File Watcher & Clipboard Monitor)
+        #region OTOMATİK İZLEYİCİLER
 
         private void InitializeAutoWatchers()
         {
-            // Debounce timer (dosya çok hızlı ardışık yazıldığında çakışmayı önler)
             _debounceTimer = new System.Windows.Forms.Timer { Interval = 800 };
             _debounceTimer.Tick += (s, e) =>
             {
@@ -847,7 +1023,6 @@ namespace AntivirusHashManager
                 ProcessWatchedFileChange();
             };
 
-            // Pano kontrol zamanlayıcısı (her 800ms)
             _clipboardTimer = new System.Windows.Forms.Timer { Interval = 800 };
             _clipboardTimer.Tick += (s, e) => CheckClipboardForSha();
         }
@@ -935,7 +1110,6 @@ namespace AntivirusHashManager
 
             Task.Run(() =>
             {
-                // Dosya kilidinin serbest kalması için kısa bekleme
                 System.Threading.Thread.Sleep(300);
                 var res = _db.ImportFromTxt(path);
 
@@ -974,7 +1148,6 @@ namespace AntivirusHashManager
                 _lastClipboardText = text;
                 string clean = text.Trim().ToLowerInvariant();
 
-                // 64 karakterli SHA-256 mı?
                 if (clean.Length == 64 && Regex.IsMatch(clean, "^[a-f0-9]{64}$"))
                 {
                     string existingThreat;
@@ -1029,10 +1202,7 @@ namespace AntivirusHashManager
             _ghSync.FilePath = path;
             _ghSync.Token = token;
 
-            if (chkSaveToken.Checked)
-            {
-                SaveGitHubConfig();
-            }
+            if (chkSaveToken.Checked) SaveGitHubConfig();
 
             btnGhPush.Enabled = false;
             btnGhPush.Text = "⏳ GitHub'a İletiliyor...";
@@ -1171,7 +1341,7 @@ namespace AntivirusHashManager
 
         #endregion
 
-        #region IPC Test
+        #region IPC & HTTP Test
 
         private void TestIpcLoopback()
         {
@@ -1179,11 +1349,93 @@ namespace AntivirusHashManager
             var res = engine.CheckHashViaIpc("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             if (res.IsThreat)
             {
-                MessageBox.Show("IPC Haberleşmesi Başarılı!\nTest Hash Yanıtı: " + res.ThreatName, "IPC OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Named Pipe Testi Başarılı!\nTest Hash Yanıtı: " + res.ThreatName, "IPC OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("IPC Haberleşmesi Çalışıyor.\nYanıt: TEMİZ", "IPC OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Named Pipe Çalışıyor.\nYanıt: TEMİZ", "IPC OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void TestHttpApi()
+        {
+            try
+            {
+                using (var wc = new System.Net.WebClient { Encoding = Encoding.UTF8 })
+                {
+                    string res = wc.DownloadString("http://127.0.0.1:8765/stats");
+                    MessageBox.Show("Yerel HTTP API Yanıtı:\n" + res, "HTTP 8765 OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("HTTP Test Hatası: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void LogIpc(string msg)
+        {
+            if (this.IsHandleCreated)
+            {
+                this.BeginInvoke(new Action(() =>
+                {
+                    rtbIpcLog.AppendText(msg + Environment.NewLine);
+                    rtbIpcLog.ScrollToCaret();
+                }));
+            }
+        }
+
+        #endregion
+
+        #region Tray Icon (Windows XP Arka Plan Çalışması)
+
+        private void InitializeTrayIcon()
+        {
+            try
+            {
+                notifyIcon = new NotifyIcon
+                {
+                    Text = "Samet-AV Threat Intelligence Studio v2.0",
+                    Visible = true,
+                    Icon = SystemIcons.Shield
+                };
+
+                var menu = new ContextMenuStrip();
+                menu.Items.Add("Göster (Open)", null, (s, e) =>
+                {
+                    this.Show();
+                    this.WindowState = FormWindowState.Normal;
+                    this.BringToFront();
+                });
+                menu.Items.Add("Canlı Tehditleri Güncelle", null, async (s, e) => await FetchLiveFeedAsync());
+                menu.Items.Add("-");
+                menu.Items.Add("Çıkış (Exit)", null, (s, e) =>
+                {
+                    notifyIcon.Visible = false;
+                    Application.Exit();
+                });
+
+                notifyIcon.ContextMenuStrip = menu;
+                notifyIcon.DoubleClick += (s, e) =>
+                {
+                    this.Show();
+                    this.WindowState = FormWindowState.Normal;
+                    this.BringToFront();
+                };
+            }
+            catch { }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Hide();
+                if (notifyIcon != null)
+                {
+                    notifyIcon.ShowBalloonTip(2000, "Samet-AV Studio", "Arka planda çalışmaya ve antivirüsleri korumaya devam ediyor.", ToolTipIcon.Info);
+                }
             }
         }
 
@@ -1205,10 +1457,21 @@ namespace AntivirusHashManager
                 _clipboardTimer.Dispose();
             }
 
-            if (_ipcServer != null)
+            if (_feedTimer != null)
             {
-                _ipcServer.Stop();
+                _feedTimer.Stop();
+                _feedTimer.Dispose();
             }
+
+            if (_ipcServer != null) _ipcServer.Stop();
+            if (_httpServer != null) _httpServer.Stop();
+
+            if (notifyIcon != null)
+            {
+                notifyIcon.Visible = false;
+                notifyIcon.Dispose();
+            }
+
             base.OnFormClosing(e);
         }
     }
