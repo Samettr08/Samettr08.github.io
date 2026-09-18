@@ -136,25 +136,25 @@ namespace AntivirusHashManager
         {
             tabDatabase.Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
 
-            // 1. Manuel Ekleme Kutusu
+            // 1. Manuel Ekleme Kutusu (Windows XP Tarzı)
             GroupBox gbAdd = new GroupBox
             {
-                Text = "Tekil İmza Ekle",
+                Text = "🛡️ Yeni SHA-256 İmza Ekleme İstasyonu (Windows XP)",
                 Dock = DockStyle.Top,
-                Height = 65,
+                Height = 68,
                 Padding = new Padding(8)
             };
 
-            Label lblH = new Label { Text = "Hash:", AutoSize = true, Location = new Point(12, 26) };
-            txtHash = new TextBox { Location = new Point(52, 23), Width = 320, Font = new Font("Consolas", 8.5f) };
+            Label lblH = new Label { Text = "Eklenecek SHA:", AutoSize = true, Location = new Point(12, 26), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
+            txtHash = new TextBox { Location = new Point(105, 23), Width = 310, Font = new Font("Consolas", 8.5f) };
 
-            Label lblT = new Label { Text = "Tehdit Adı:", AutoSize = true, Location = new Point(385, 26) };
-            txtThreatName = new TextBox { Location = new Point(455, 23), Width = 180, Text = "Trojan.Win32.Generic" };
+            Label lblT = new Label { Text = "Tehdit Tanımı:", AutoSize = true, Location = new Point(425, 26), Font = new Font("Tahoma", 8.25f, FontStyle.Bold) };
+            txtThreatName = new TextBox { Location = new Point(508, 23), Width = 150, Text = "Trojan.Win32.PufaAv.Generic" };
 
             btnAdd = new Button
             {
-                Text = "➕ İmzayı Ekle",
-                Location = new Point(650, 21),
+                Text = "➕ SHA'yı Ekle",
+                Location = new Point(668, 21),
                 Width = 110,
                 Height = 26,
                 Font = new Font("Tahoma", 8.25f, FontStyle.Bold),
