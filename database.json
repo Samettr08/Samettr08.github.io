@@ -1,9 +1,9 @@
 ﻿{
   "schema_version": "1.0",
-  "database_name": "PufaAv Threat Signature Database",
-  "updated_at": "2026-09-18T16:07:30Z",
+  "database_name": "Antivirus Signature Database",
+  "updated_at": "2026-09-18T16:32:04Z",
   "total_signatures": 27667,
-  "hash_type": "SHA256",
+  "hash_type": "SHA256/MD5",
   "signatures": {
     "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f": "Test.EICAR.Standard-File",
     "ffdcff31f773e46c04ca08aba62021bec6bb380871b1122140f11e1f84c97a5c": "Malware.PufaAv.Generic",
