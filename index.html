@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samet-AV | Windows XP Threat Signature Studio</title>
+    <title>Samet-AV | Threat Intelligence &amp; Signature Hub</title>
     <style>
         :root {
             --xp-blue: #0055ea;
@@ -27,7 +27,7 @@
         }
 
         body {
-            /* Windows XP Bliss Desktop Wallpaper Vibes */
+            /* Windows XP Bliss Desktop Background */
             background: linear-gradient(180deg, #245edb 0%, #3f8cf3 50%, #469cf8 60%, #4b942a 61%, #57a62e 70%, #68b835 100%);
             background-attachment: fixed;
             min-height: 100vh;
@@ -40,7 +40,7 @@
             margin: 0 auto;
         }
 
-        /* Windows XP Luna Window Box */
+        /* Windows XP Window */
         .xp-window {
             background-color: var(--xp-bg);
             border: 3px solid var(--xp-blue);
@@ -51,7 +51,7 @@
             margin-bottom: 25px;
         }
 
-        /* Windows XP Luna Title Bar */
+        /* Title Bar */
         .xp-titlebar {
             background: linear-gradient(180deg, 
                 #0058ee 0%, 
@@ -69,7 +69,6 @@
             color: #ffffff;
             font-weight: bold;
             font-size: 13px;
-            letter-spacing: 0.3px;
             text-shadow: 1px 1px 2px #001f5c;
             user-select: none;
             border-bottom: 1px solid #002266;
@@ -83,10 +82,8 @@
 
         .xp-shield-icon {
             font-size: 16px;
-            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
         }
 
-        /* XP Control Buttons */
         .xp-controls {
             display: flex;
             gap: 3px;
@@ -115,15 +112,7 @@
             background: linear-gradient(180deg, #f2725e 0%, #d83a21 50%, #ba2008 51%, #c9290f 100%);
         }
 
-        .xp-btn-ctrl:hover {
-            filter: brightness(1.15);
-        }
-
-        .xp-btn-ctrl:active {
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
-        }
-
-        /* XP Menu Bar */
+        /* Menu Bar */
         .xp-menubar {
             background: #f0ede0;
             border-bottom: 1px solid #dcd8cf;
@@ -141,12 +130,11 @@
             color: #0055ea;
         }
 
-        /* Window Body */
         .xp-body {
             padding: 12px 14px;
         }
 
-        /* XP Tabs */
+        /* Tabs */
         .xp-tabs-header {
             display: flex;
             gap: 3px;
@@ -160,7 +148,7 @@
             border: 1px solid #919b9c;
             border-bottom: none;
             border-radius: 4px 4px 0 0;
-            padding: 5px 14px;
+            padding: 5px 16px;
             font-size: 12px;
             font-weight: bold;
             color: #444;
@@ -176,7 +164,7 @@
             padding-bottom: 6px;
         }
 
-        /* XP GroupBox */
+        /* GroupBox */
         fieldset.xp-groupbox {
             border: 1px solid var(--xp-group-border);
             border-radius: 5px;
@@ -192,7 +180,6 @@
             padding: 0 6px;
         }
 
-        /* Form Controls */
         .form-row {
             display: flex;
             gap: 10px;
@@ -213,12 +200,12 @@
             border: 1px solid var(--xp-border-soft);
             box-shadow: inset 1px 1px 2px #d0d0d0;
             border-radius: 2px;
-            padding: 5px 8px;
+            padding: 6px 8px;
             font-size: 12px;
             font-family: 'Consolas', 'Courier New', monospace;
             outline: none;
             flex: 1;
-            min-width: 260px;
+            min-width: 280px;
         }
 
         .xp-input:focus {
@@ -226,15 +213,7 @@
             box-shadow: 0 0 3px rgba(0, 85, 234, 0.5);
         }
 
-        select.xp-select {
-            background: #ffffff;
-            border: 1px solid var(--xp-border-soft);
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: 2px;
-        }
-
-        /* Classic Windows XP Luna Button */
+        /* Buttons */
         .xp-btn {
             background: linear-gradient(180deg, 
                 #ffffff 0%, 
@@ -265,15 +244,7 @@
         .xp-btn:active {
             background: #ddd9cd;
             border-color: #003c74;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
             padding: 6px 15px 4px 17px;
-        }
-
-        .xp-btn-green {
-            background: linear-gradient(180deg, #8ae07a 0%, #5cb85c 50%, #449d44 100%);
-            border-color: #2b662b;
-            color: #fff;
-            text-shadow: 1px 1px 1px #1e461e;
         }
 
         .xp-btn-blue {
@@ -281,6 +252,20 @@
             border-color: #003399;
             color: #fff;
             text-shadow: 1px 1px 1px #001f5c;
+        }
+
+        /* Security Banner */
+        .xp-security-banner {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #795548;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         /* Stats Bar */
@@ -299,7 +284,6 @@
             display: flex;
             flex-direction: column;
             gap: 3px;
-            box-shadow: inset 0 1px 2px #eee;
         }
 
         .xp-stat-lbl {
@@ -315,31 +299,32 @@
             font-family: 'Consolas', monospace;
         }
 
-        /* Alert Banners */
+        /* Alerts */
         .xp-alert {
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 3px;
-            font-size: 12px;
+            font-size: 13px;
             margin-top: 8px;
             display: none;
             font-weight: bold;
+            line-height: 1.5;
         }
 
         .xp-alert-success {
             background: #e8f5e9;
             border: 1px solid #4caf50;
-            color: #2e7d32;
+            color: #1b5e20;
         }
 
         .xp-alert-danger {
             background: #ffebee;
-            border: 1px solid #f44336;
-            color: #c62828;
+            border: 2px solid #f44336;
+            color: #b71c1c;
         }
 
         /* Table */
         .xp-table-container {
-            max-height: 280px;
+            max-height: 320px;
             overflow-y: auto;
             background: #ffffff;
             border: 1px solid var(--xp-border-soft);
@@ -356,7 +341,7 @@
             background: linear-gradient(180deg, #f8f7f2 0%, #ece9d8 100%);
             border-bottom: 1px solid #919b9c;
             border-right: 1px solid #d5d0c0;
-            padding: 5px 8px;
+            padding: 6px 8px;
             text-align: left;
             position: sticky;
             top: 0;
@@ -373,22 +358,9 @@
             font-size: 11px;
         }
 
-        table.xp-table tr:nth-child(even) {
-            background-color: #faf9f5;
-        }
-
         table.xp-table tr:hover {
             background-color: #316ac5;
             color: #ffffff;
-        }
-
-        .badge-new {
-            background: #ff6600;
-            color: #fff;
-            padding: 1px 5px;
-            border-radius: 2px;
-            font-size: 9px;
-            font-weight: bold;
         }
 
         /* Status Bar */
@@ -404,13 +376,14 @@
         }
 
         .code-box {
-            background: #222;
+            background: #111;
             color: #00ff66;
-            padding: 8px;
+            padding: 10px;
             font-family: 'Consolas', monospace;
             font-size: 11px;
             border-radius: 3px;
             overflow-x: auto;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -418,121 +391,74 @@
 
 <div class="container">
     <div class="xp-window">
-        <!-- Windows XP Titlebar -->
+        <!-- Titlebar -->
         <div class="xp-titlebar">
             <div class="xp-title-left">
                 <span class="xp-shield-icon">🛡️</span>
-                <span>SAMET-AV THREAT INTELLIGENCE &amp; SIGNATURE STUDIO (Windows XP Edition)</span>
+                <span>SAMET-AV THREAT INTELLIGENCE &amp; SIGNATURE HUB (Windows XP Edition)</span>
             </div>
             <div class="xp-controls">
                 <div class="xp-btn-ctrl xp-min">_</div>
                 <div class="xp-btn-ctrl xp-max">□</div>
-                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV İmza Sistemi Aktiftir.')">✕</div>
+                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV İmza Sistemi Aktif.')">✕</div>
             </div>
         </div>
 
         <!-- Menu Bar -->
         <div class="xp-menubar">
             <span class="xp-menu-item"><b>Dosya</b></span>
-            <span class="xp-menu-item">Düzen</span>
             <span class="xp-menu-item">Görünüm</span>
-            <span class="xp-menu-item" onclick="exportCurrentJson()">Veritabanını Dışa Aktar</span>
-            <span class="xp-menu-item" onclick="alert('Samet-AV Windows XP Antivirüs İmza Veritabanı v1.0')">Yardım</span>
+            <span class="xp-menu-item" onclick="location.reload()">Yenile (F5)</span>
+            <span class="xp-menu-item" onclick="alert('Samet-AV Signature Hub v1.0\nBu web sitesi genel sorgulama ve istemciler için salt-okunurdur.\nVeritabanı yönetimi yalnızca yetkili HashManager.exe üzerinden yapılır.')">Hakkında</span>
         </div>
 
         <div class="xp-body">
-            <!-- XP Sekme Başlıkları -->
+            <!-- Güvenlik Bilgilendirmesi -->
+            <div class="xp-security-banner">
+                <span style="font-size: 16px;">🔒</span>
+                <div>
+                    <b>Güvenli Salt-Okunur Veritabanı:</b> Web arayüzü yalnızca arama ve tarama amaçlıdır. Veritabanına yeni hash ekleme/çıkarma yetkisi yalnızca özel <b>HashManager.exe</b> yönetim aracına aittir.
+                </div>
+            </div>
+
+            <!-- XP Sekmeler -->
             <div class="xp-tabs-header">
-                <button class="xp-tab-btn active" id="tabBtn1" onclick="switchTab(1)">➕ Yeni SHA Ekle</button>
-                <button class="xp-tab-btn" id="tabBtn2" onclick="switchTab(2)">🔍 SHA Sorgula &amp; Tara</button>
-                <button class="xp-tab-btn" id="tabBtn3" onclick="switchTab(3)">📋 İmzalar Listesi</button>
-                <button class="xp-tab-btn" id="tabBtn4" onclick="switchTab(4)">📡 İstemci Entegrasyonu</button>
+                <button class="xp-tab-btn active" id="tabBtn1" onclick="switchTab(1)">🔍 SHA-256 Tehdit Sorgula</button>
+                <button class="xp-tab-btn" id="tabBtn2" onclick="switchTab(2)">📋 İmzalar Veritabanı</button>
+                <button class="xp-tab-btn" id="tabBtn3" onclick="switchTab(3)">📡 Antivirüs İstemci Entegrasyonu</button>
             </div>
 
             <!-- Canlı İstatistikler -->
             <div class="xp-stats-grid">
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">Toplam İmza Sayısı</span>
+                    <span class="xp-stat-lbl">Kayıtlı Zararlı Sayısı</span>
                     <span class="xp-stat-val" id="statTotalCount">Yükleniyor...</span>
                 </div>
                 <div class="xp-stat-box">
                     <span class="xp-stat-lbl">Veritabanı Durumu</span>
-                    <span class="xp-stat-val" style="color: #008800; font-size: 13px;">🟢 CANLI &amp; AKTİF</span>
+                    <span class="xp-stat-val" style="color: #008800; font-size: 13px;">🟢 CANLI &amp; KORUMALI</span>
                 </div>
                 <div class="xp-stat-box">
                     <span class="xp-stat-lbl">Son Güncelleme</span>
                     <span class="xp-stat-val" style="font-size: 12px;" id="statLastUpdate">--</span>
                 </div>
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">İmza Tipi</span>
+                    <span class="xp-stat-lbl">İmza Standardı</span>
                     <span class="xp-stat-val" style="font-size: 13px; color: #0055ea;">SHA-256 (Hex 64)</span>
                 </div>
             </div>
 
-            <!-- ================= SEKME 1: YENİ SHA EKLEME ================= -->
+            <!-- ================= SEKME 1: SHA SORGULAMA ================= -->
             <div id="tabContent1">
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🛡️ Yeni SHA-256 İmza Ekleme Paneli</legend>
-
-                    <div class="form-row">
-                        <label class="xp-label" for="inputAddSha">Eklenecek SHA Değeri:</label>
-                        <input type="text" id="inputAddSha" class="xp-input" placeholder="Eklenecek 64 karakterli SHA-256 hash'ini giriniz (örn: ffdcff31f773...)" autocomplete="off">
-                    </div>
-
-                    <div class="form-row">
-                        <label class="xp-label" for="inputThreatName">Tehdit / Zararlı Adı:</label>
-                        <input type="text" id="inputThreatName" class="xp-input" value="Trojan.Win32.PufaAv.Generic" placeholder="Örn: Ransom.Win32.LockBit veya Trojan.Agent">
-                    </div>
-
-                    <div class="form-row">
-                        <label class="xp-label" for="selectThreatLevel">Tehdit Seviyesi:</label>
-                        <select id="selectThreatLevel" class="xp-select">
-                            <option value="Critical">🔴 Kritik Tehdit</option>
-                            <option value="High" selected>🟠 Yüksek Tehdit</option>
-                            <option value="Medium">🟡 Orta Seviye</option>
-                            <option value="Suspicious">⚪ Şüpheli Dosya</option>
-                        </select>
-
-                        <button class="xp-btn xp-btn-green" onclick="addNewSha()" style="margin-left: 10px;">
-                            <span>➕</span> SHA'yı Veritabanına Ekle
-                        </button>
-                        
-                        <button class="xp-btn" onclick="document.getElementById('fileCalcSha').click()">
-                            <span>📂</span> Dosyadan SHA Hesapla &amp; Ekle
-                        </button>
-                        <input type="file" id="fileCalcSha" style="display:none;" onchange="handleFileShaCalc(event)">
-                    </div>
-
-                    <div id="addShaAlert" class="xp-alert xp-alert-success"></div>
-                </fieldset>
-
-                <!-- Yeni Eklenenleri İndirme ve Yönetme -->
-                <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">💾 İmzaları Kaydetme &amp; Dışa Aktarma</legend>
-                    <p style="font-size: 11px; color: #555; margin-bottom: 8px;">
-                        Web üzerinden eklediğiniz yeni imzalar anında belleğe eklenir. Güncellenmiş veritabanını tek tıkla indirebilir veya C# HashManager ile reponuza push edebilirsiniz:
+                    <legend class="xp-legend">🔍 SHA-256 Tehdit Analiz İstasyonu (O(1) Memory Lookup)</legend>
+                    <p style="font-size: 11px; color: #555; margin-bottom: 10px;">
+                        Bilgisayarınızdaki bir dosyanın veya şüpheli bir SHA-256 hash'inin 27.600+ zararlı imzası arasında bulunup bulunmadığını anında test edin:
                     </p>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="xp-btn xp-btn-blue" onclick="exportCurrentJson()">
-                            <span>💾</span> Güncel database.json İndir
-                        </button>
-                        <button class="xp-btn" onclick="copyDatabaseJson()">
-                            <span>📋</span> JSON Kodunu Panoya Kopyala
-                        </button>
-                        <a href="database.json" download="database.json" style="text-decoration:none;">
-                            <button class="xp-btn"><span>🌐</span> Sunucudaki Orijinal database.json</button>
-                        </a>
-                    </div>
-                </fieldset>
-            </div>
 
-            <!-- ================= SEKME 2: SHA SORGULAMA & TARAMA ================= -->
-            <div id="tabContent2" style="display:none;">
-                <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🔍 Hızlı SHA-256 Tehdit Analizi (O(1) Memory Lookup)</legend>
                     <div class="form-row">
                         <label class="xp-label" for="inputQuerySha">Sorgulanacak SHA:</label>
-                        <input type="text" id="inputQuerySha" class="xp-input" placeholder="Kontrol etmek istediğiniz SHA-256 hash'ini buraya yapıştırın...">
+                        <input type="text" id="inputQuerySha" class="xp-input" placeholder="64 karakterli SHA-256 hash'ini girin veya yapıştırın...">
                         <button class="xp-btn xp-btn-blue" onclick="querySha()">
                             <span>🔎</span> Sorgula
                         </button>
@@ -544,22 +470,30 @@
 
                     <div id="queryVerdict" class="xp-alert"></div>
                 </fieldset>
+
+                <fieldset class="xp-groupbox">
+                    <legend class="xp-legend">🛡️ Yönetici ve Antivirüs Araçları</legend>
+                    <p style="font-size: 12px; line-height: 1.5; color: #333;">
+                        • <b>Veritabanı Güncelleme:</b> Yeni zararlı hash'leri eklemek, TXT dosyalarını içe aktarmak ve GitHub'a otomatik push etmek için yerel <b>HashManager.exe</b> aracını kullanın.<br>
+                        • <b>Ham Veritabanı İndir:</b> <a href="database.json" download="database.json" style="color: #0055ea; font-weight: bold;">database.json (Tüm Tehditler)</a>
+                    </p>
+                </fieldset>
             </div>
 
-            <!-- ================= SEKME 3: İMZA LİSTESİ ================= -->
-            <div id="tabContent3" style="display:none;">
+            <!-- ================= SEKME 2: İMZA LİSTESİ ================= -->
+            <div id="tabContent2" style="display:none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span style="font-size: 12px; font-weight: bold;">📋 Veritabanındaki Güncel İmzalar:</span>
-                    <input type="text" id="tableFilterInput" class="xp-input" style="max-width: 250px; font-size: 11px;" placeholder="Listede filtrele..." oninput="filterTable()">
+                    <input type="text" id="tableFilterInput" class="xp-input" style="max-width: 250px; font-size: 11px;" placeholder="Listede ara (örn: lockbit, ffdc...)" oninput="filterTable()">
                 </div>
 
                 <div class="xp-table-container">
                     <table class="xp-table">
                         <thead>
                             <tr>
-                                <th style="width: 45px;">#</th>
+                                <th style="width: 50px;">#</th>
                                 <th>SHA-256 Hash</th>
-                                <th style="width: 260px;">Tehdit Tanımı</th>
+                                <th style="width: 280px;">Tehdit Tanımı (Malware)</th>
                                 <th style="width: 80px;">İşlem</th>
                             </tr>
                         </thead>
@@ -570,17 +504,17 @@
                 </div>
             </div>
 
-            <!-- ================= SEKME 4: ENTEGRASYON BİLGİSİ ================= -->
-            <div id="tabContent4" style="display:none;">
+            <!-- ================= SEKME 3: İSTEMCİ ENTEGRASYONU ================= -->
+            <div id="tabContent3" style="display:none;">
                 <fieldset class="xp-groupbox">
                     <legend class="xp-legend">📡 Kendi Antivirüsünüze Veritabanı Bağlantısı</legend>
-                    <p style="font-size: 12px; margin-bottom: 6px;">
-                        Antivirüsünüzün bu veritabanından en güncel 27.000+ imzayı çekip bellekte tarama yapması için hazır API adresi:
+                    <p style="font-size: 12px; margin-bottom: 8px;">
+                        Geliştirdiğiniz antivirüs istemcileri (PufaAv, tarayıcı veya arka plan koruma motoru) en güncel imzaları doğrudan bu adresten çekebilir:
                     </p>
                     <div class="code-box">
 GET https://samettr08.github.io/database.json
 
-// C# İstemci Örneği:
+// C# İstemci İle 1 Saniyede Belleğe Alma:
 using (var wc = new System.Net.WebClient()) {
     string json = wc.DownloadString("https://samettr08.github.io/database.json");
     // Bellekte HashSet veya Dictionary ile O(1) anında hash kontrolü
@@ -593,16 +527,14 @@ using (var wc = new System.Net.WebClient()) {
         <!-- Windows XP Status Bar -->
         <div class="xp-statusbar">
             <span id="lblStatus">Hazır. Windows XP Luna Engine aktif.</span>
-            <span>Konum: <b>samettr08.github.io</b></span>
+            <span>Konum: <b>samettr08.github.io</b> (Salt-Okunur)</span>
         </div>
     </div>
 </div>
 
 <script>
     let dbData = { signatures: {} };
-    let newlyAddedHashes = new Set();
 
-    // Veritabanını GitHub Pages'ten yükle
     async function loadDatabase() {
         const lbl = document.getElementById('lblStatus');
         lbl.textContent = 'database.json indiriliyor...';
@@ -618,94 +550,34 @@ using (var wc = new System.Net.WebClient()) {
             document.getElementById('statLastUpdate').textContent = dbData.updated_at ? new Date(dbData.updated_at).toLocaleString('tr-TR') : 'Şimdi';
 
             renderTable(dbData.signatures);
-            lbl.textContent = 'Hazır. ' + keys.length.toLocaleString('tr-TR') + ' adet imza yüklendi.';
+            lbl.textContent = 'Hazır. ' + keys.length.toLocaleString('tr-TR') + ' adet tehdit imzası aktif.';
         } catch (e) {
             console.error(e);
             lbl.textContent = 'Uyarı: database.json henüz okunamadı.';
         }
     }
 
-    // Tab Değiştirme
     function switchTab(idx) {
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 3; i++) {
             document.getElementById('tabContent' + i).style.display = (i === idx) ? 'block' : 'none';
             document.getElementById('tabBtn' + i).className = (i === idx) ? 'xp-tab-btn active' : 'xp-tab-btn';
         }
     }
 
-    // ================= YENİ SHA EKLEME =================
-    function addNewSha() {
-        const shaInput = document.getElementById('inputAddSha');
-        const threatInput = document.getElementById('inputThreatName');
-        const levelSelect = document.getElementById('selectThreatLevel');
-        const alertBox = document.getElementById('addShaAlert');
-
-        let rawSha = shaInput.value.trim().toLowerCase();
-        let threatName = threatInput.value.trim();
-
-        if (!rawSha) {
-            showAlert(alertBox, 'Lütfen eklenecek SHA-256 hash değerini giriniz!', false);
-            return;
-        }
-
-        // SHA-256 format doğrulama (64 karakter hex)
-        if (!/^[a-f0-9]{64}$/.test(rawSha)) {
-            showAlert(alertBox, 'Hata: Geçersiz SHA-256! SHA-256 değeri tam 64 karakterli hex olmalıdır.', false);
-            return;
-        }
-
-        if (!threatName) {
-            threatName = 'Trojan.Win32.PufaAv.Generic';
-        }
-
-        if (!dbData.signatures) dbData.signatures = {};
-
-        const isNew = !dbData.signatures[rawSha];
-        dbData.signatures[rawSha] = threatName;
-        newlyAddedHashes.add(rawSha);
-
-        const total = Object.keys(dbData.signatures).length;
-        dbData.total_signatures = total;
-        dbData.updated_at = new Date().toISOString();
-
-        document.getElementById('statTotalCount').textContent = total.toLocaleString('tr-TR');
-        document.getElementById('statLastUpdate').textContent = new Date().toLocaleString('tr-TR');
-
-        renderTable(dbData.signatures);
-
-        showAlert(alertBox, `✅ BAŞARILI: SHA-256 imzası veritabanına eklendi!\nHash: ${rawSha}\nTanım: ${threatName} (${levelSelect.value})`, true);
-        shaInput.value = '';
-    }
-
-    async function handleFileShaCalc(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const alertBox = document.getElementById('addShaAlert');
-        showAlert(alertBox, `${file.name} dosyasının SHA-256 hash'i hesaplanıyor...`, true);
-
-        const sha = await computeFileSha256(file);
-        document.getElementById('inputAddSha').value = sha;
-        document.getElementById('inputThreatName').value = 'Suspicious.' + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
-
-        showAlert(alertBox, `SHA-256 başarıyla hesaplandı: ${sha}. Şimdi "SHA'yı Veritabanına Ekle" butonuna basabilirsiniz.`, true);
-    }
-
-    // ================= SHA SORGULAMA =================
     function querySha() {
         const input = document.getElementById('inputQuerySha').value.trim().toLowerCase();
         const alertBox = document.getElementById('queryVerdict');
 
         if (!input) {
-            alert('Lütfen sorgulanacak bir SHA giriniz!');
+            alert('Lütfen sorgulanacak bir SHA-256 hash giriniz!');
             return;
         }
 
         if (dbData.signatures && dbData.signatures[input]) {
             const threat = dbData.signatures[input];
-            showAlert(alertBox, `🚨 TEHLİKE TESPİT EDİLDİ!\nBu SHA veritabanında kayıtlı bir zararlı!\nTehdit: ${threat}\nSHA: ${input}`, false);
+            showAlert(alertBox, `🚨 TEHLİKE TESPİT EDİLDİ!\nBu dosya veritabanında bilinen bir zararlı!\nTehdit Tanımı: ${threat}\nSHA-256: ${input}`, false);
         } else {
-            showAlert(alertBox, `✅ TEMİZ: Bu SHA-256 imzası veritabanında bulunamadı (Zararsız veya henüz eklenmemiş).\nSHA: ${input}`, true);
+            showAlert(alertBox, `✅ TEMİZ: Bu SHA-256 imzası veritabanında eşleşmedi (Zararsız veya henüz eklenmemiş).\nSHA-256: ${input}`, true);
         }
     }
 
@@ -713,17 +585,16 @@ using (var wc = new System.Net.WebClient()) {
         const file = e.target.files[0];
         if (!file) return;
 
-        const sha = await computeFileSha256(file);
-        document.getElementById('inputQuerySha').value = sha;
-        querySha();
-    }
+        const alertBox = document.getElementById('queryVerdict');
+        showAlert(alertBox, `${file.name} taranıyor, SHA-256 hesaplanıyor...`, true);
 
-    // ================= YARDIMCI FONKSİYONLAR =================
-    async function computeFileSha256(file) {
         const buffer = await file.arrayBuffer();
         const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const sha = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        document.getElementById('inputQuerySha').value = sha;
+        querySha();
     }
 
     function showAlert(box, msg, isSuccess) {
@@ -743,27 +614,14 @@ using (var wc = new System.Net.WebClient()) {
             return;
         }
 
-        // Yeni eklenenler en üstte görünsün
-        entries.sort((a, b) => {
-            const aNew = newlyAddedHashes.has(a[0]);
-            const bNew = newlyAddedHashes.has(b[0]);
-            if (aNew && !bNew) return -1;
-            if (!aNew && bNew) return 1;
-            return 0;
-        });
-
-        // DOM donmasın diye ilk 400 tanesi
         const limit = 400;
         const slice = entries.slice(0, limit);
 
         for (const [hash, name] of slice) {
-            const isNew = newlyAddedHashes.has(hash);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index++}</td>
-                <td title="${hash}">
-                    ${isNew ? '<span class="badge-new">YENİ</span> ' : ''}${hash}
-                </td>
+                <td title="${hash}">${hash}</td>
                 <td style="color: #b71c1c; font-weight: bold;">⚠️ ${escapeHtml(name)}</td>
                 <td>
                     <button class="xp-btn" style="padding: 1px 6px; font-size: 10px;" onclick="copyText('${hash}')">Kopyala</button>
@@ -774,7 +632,7 @@ using (var wc = new System.Net.WebClient()) {
 
         if (entries.length > limit) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha imza veritabanında mevcut.</td>`;
+            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha imza veritabanında kayıtlı.</td>`;
             tbody.appendChild(tr);
         }
     }
@@ -788,26 +646,6 @@ using (var wc = new System.Net.WebClient()) {
             }
         }
         renderTable(filtered);
-    }
-
-    function exportCurrentJson() {
-        const jsonStr = JSON.stringify(dbData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'database.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    function copyDatabaseJson() {
-        const jsonStr = JSON.stringify(dbData, null, 2);
-        navigator.clipboard.writeText(jsonStr).then(() => {
-            alert('Güncel database.json içeriği panoya kopyalandı!');
-        });
     }
 
     function copyText(t) {
