@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samet-AV | Threat Intelligence &amp; Signature Hub</title>
+    <title>Samet-AV | Zararlı Web &amp; Domain Veritabanı (Web Database)</title>
     <style>
         :root {
             --xp-blue: #0055ea;
@@ -110,24 +110,6 @@
 
         .xp-close {
             background: linear-gradient(180deg, #f2725e 0%, #d83a21 50%, #ba2008 51%, #c9290f 100%);
-        }
-
-        /* Menu Bar */
-        .xp-menubar {
-            background: #f0ede0;
-            border-bottom: 1px solid #dcd8cf;
-            padding: 3px 8px;
-            display: flex;
-            gap: 14px;
-            font-size: 11px;
-        }
-
-        .xp-menu-item {
-            color: #222;
-            cursor: pointer;
-        }
-        .xp-menu-item:hover {
-            color: #0055ea;
         }
 
         /* Navigation Bar (Switch between Hashes and Web DB) */
@@ -331,7 +313,7 @@
         .xp-stat-val {
             font-size: 18px;
             font-weight: bold;
-            color: #003399;
+            color: #cc0000;
             font-family: 'Consolas', monospace;
         }
 
@@ -430,28 +412,27 @@
         <!-- Titlebar -->
         <div class="xp-titlebar">
             <div class="xp-title-left">
-                <span class="xp-shield-icon">🛡️</span>
-                <span>SAMET-AV THREAT INTELLIGENCE &amp; SIGNATURE HUB (Windows XP Edition)</span>
+                <span class="xp-shield-icon">🌐</span>
+                <span>SAMET-AV MALICIOUS WEB &amp; DOMAIN DATABASE (Web Database v1.0)</span>
             </div>
             <div class="xp-controls">
                 <div class="xp-btn-ctrl xp-min">_</div>
                 <div class="xp-btn-ctrl xp-max">□</div>
-                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV İmza Sistemi Aktif.')">✕</div>
+                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV Web Veritabanı Aktif.')">✕</div>
             </div>
         </div>
 
-        <!-- Menu Bar -->
-        <div class="xp-menubar">
-            <span class="xp-menu-item"><b>Dosya</b></span>
-            <span class="xp-menu-item">Görünüm</span>
-            <span class="xp-menu-item" onclick="location.reload()">Yenile (F5)</span>
-            <span class="xp-menu-item" onclick="alert('Samet-AV Signature Hub v2.0\nBu web sitesi genel sorgulama ve istemciler için salt-okunurdur.\nVeritabanı yönetimi yalnızca yetkili HashManager.exe üzerinden yapılır.')">Hakkında</span>
-        </div>
-
-        <!-- Navigation Bar (Switch between Hashes and Web DB) -->
+        <!-- Üst Gezinme Çubuğu (Veritabanları Arası Geçiş) -->
         <div class="xp-nav-bar">
-            <a href="index.html" class="xp-nav-link active">🛡️ Dosya Hash Veritabanı (database.json)</a>
-            <a href="webdatabase.html" class="xp-nav-link">🌐 Zararlı Web &amp; Domain Veritabanı (webdatabase.json)</a>
+            <a href="index.html" class="xp-nav-link">
+                <span>🛡️</span> Dosya Hash Veritabanı (index.html)
+            </a>
+            <a href="webdatabase.html" class="xp-nav-link active">
+                <span>🌐</span> Zararlı Web &amp; Domain Veritabanı (webdatabase.html)
+            </a>
+            <div style="margin-left: auto; font-size: 11px; color: #555;">
+                Merkezi Bulut: <b>samettr08.github.io</b>
+            </div>
         </div>
 
         <div class="xp-body">
@@ -459,74 +440,70 @@
             <div class="xp-security-banner">
                 <span style="font-size: 16px;">🔒</span>
                 <div>
-                    <b>Güvenli Salt-Okunur Veritabanı:</b> Web arayüzü yalnızca arama ve tarama amaçlıdır. Veritabanına yeni hash ekleme/çıkarma yetkisi yalnızca özel <b>HashManager.exe</b> yönetim aracına aittir.
+                    <b>Güvenli Salt-Okunur Web Veritabanı:</b> Bu sayfa ziyaretçiler ve antivirüs istemcileri için genel sorgulama amaçlıdır. Yeni web ve domain engelleri yalnızca yetkili <b>HashManager.exe</b> üzerinden eklenip güncellenir.
                 </div>
             </div>
 
             <!-- XP Sekmeler -->
             <div class="xp-tabs-header">
-                <button class="xp-tab-btn active" id="tabBtn1" onclick="switchTab(1)">🔍 SHA-256 Tehdit Sorgula</button>
-                <button class="xp-tab-btn" id="tabBtn2" onclick="switchTab(2)">📋 İmzalar Veritabanı</button>
-                <button class="xp-tab-btn" id="tabBtn3" onclick="switchTab(3)">📡 Antivirüs İstemci Entegrasyonu</button>
+                <button class="xp-tab-btn active" id="tabBtn1" onclick="switchTab(1)">🔍 URL &amp; Domain Engeli Sorgula</button>
+                <button class="xp-tab-btn" id="tabBtn2" onclick="switchTab(2)">📋 Engelli Domainler Listesi</button>
+                <button class="xp-tab-btn" id="tabBtn3" onclick="switchTab(3)">📡 Antivirüs Web Koruma Entegrasyonu</button>
             </div>
 
             <!-- Canlı İstatistikler -->
             <div class="xp-stats-grid">
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">Kayıtlı Zararlı Sayısı</span>
-                    <span class="xp-stat-val" id="statTotalCount">Yükleniyor...</span>
+                    <span class="xp-stat-lbl">Engellenen Zararlı Domain</span>
+                    <span class="xp-stat-val" id="statTotalDomains">Yükleniyor...</span>
                 </div>
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">Veritabanı Durumu</span>
-                    <span class="xp-stat-val" style="color: #008800; font-size: 13px;">🟢 CANLI &amp; KORUMALI</span>
+                    <span class="xp-stat-lbl">Koruma Durumu</span>
+                    <span class="xp-stat-val" style="color: #008800; font-size: 13px;">🟢 CANLI &amp; AKTİF</span>
                 </div>
                 <div class="xp-stat-box">
                     <span class="xp-stat-lbl">Son Güncelleme</span>
-                    <span class="xp-stat-val" style="font-size: 12px;" id="statLastUpdate">--</span>
+                    <span class="xp-stat-val" style="font-size: 12px; color: #000;" id="statLastUpdate">--</span>
                 </div>
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">İmza Standardı</span>
-                    <span class="xp-stat-val" style="font-size: 13px; color: #0055ea;">SHA-256 (Hex 64)</span>
+                    <span class="xp-stat-lbl">Kapsam</span>
+                    <span class="xp-stat-val" style="font-size: 12px; color: #0055ea;">Domain + Tüm Alt Sayfalar</span>
                 </div>
             </div>
 
-            <!-- ================= SEKME 1: SHA SORGULAMA ================= -->
+            <!-- ================= SEKME 1: URL/DOMAIN SORGULAMA ================= -->
             <div id="tabContent1">
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🔍 SHA-256 Tehdit Analiz İstasyonu (O(1) Memory Lookup)</legend>
+                    <legend class="xp-legend">🔍 Canlı URL &amp; Web Sitesi Güvenlik Testi</legend>
                     <p style="font-size: 11px; color: #555; margin-bottom: 10px;">
-                        Bilgisayarınızdaki bir dosyanın veya şüpheli bir SHA-256 hash'inin 27.600+ zararlı imzası arasında bulunup bulunmadığını anında test edin:
+                        Kontrol etmek istediğiniz web sitesini veya bağlantıyı girin (Bir ana domain engellendiğinde, tüm alt sayfaları ve alt alan adları da otomatik engellenir):
                     </p>
 
                     <div class="form-row">
-                        <label class="xp-label" for="inputQuerySha">Sorgulanacak SHA:</label>
-                        <input type="text" id="inputQuerySha" class="xp-input" placeholder="64 karakterli SHA-256 hash'ini girin veya yapıştırın...">
-                        <button class="xp-btn xp-btn-blue" onclick="querySha()">
-                            <span>🔎</span> Sorgula
+                        <label class="xp-label" for="inputQueryUrl">URL veya Domain:</label>
+                        <input type="text" id="inputQueryUrl" class="xp-input" placeholder="Örn: https://malware.com/login veya 0following.com" autocomplete="off">
+                        <button class="xp-btn xp-btn-blue" onclick="checkWebUrl()">
+                            <span>🔎</span> Web Engelini Kontrol Et
                         </button>
-                        <button class="xp-btn" onclick="document.getElementById('fileScanTest').click()">
-                            <span>📂</span> Dosya Tara
-                        </button>
-                        <input type="file" id="fileScanTest" style="display:none;" onchange="handleFileScanTest(event)">
                     </div>
 
                     <div id="queryVerdict" class="xp-alert"></div>
                 </fieldset>
 
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🛡️ Yönetici ve Antivirüs Araçları</legend>
+                    <legend class="xp-legend">🛡️ Web Veritabanı ve Yönetim</legend>
                     <p style="font-size: 12px; line-height: 1.5; color: #333;">
-                        • <b>Veritabanı Güncelleme:</b> Yeni zararlı hash'leri eklemek, TXT dosyalarını içe aktarmak ve GitHub'a otomatik push etmek için yerel <b>HashManager.exe</b> aracını kullanın.<br>
-                        • <b>Ham Veritabanı İndir:</b> <a href="database.json" download="database.json" style="color: #0055ea; font-weight: bold;">database.json (Tüm Tehditler)</a>
+                        • <b>Yeni Web Engeli Ekleme:</b> Yeni zararlı siteleri eklemek, toplu domain listesi yüklemek ve GitHub'a otomatik push etmek için <b>HashManager.exe</b> aracını kullanın.<br>
+                        • <b>Ham Web Veritabanını İndir:</b> <a href="webdatabase.json" download="webdatabase.json" style="color: #0055ea; font-weight: bold;">webdatabase.json (Tüm Engelli Siteler)</a>
                     </p>
                 </fieldset>
             </div>
 
-            <!-- ================= SEKME 2: İMZA LİSTESİ ================= -->
+            <!-- ================= SEKME 2: ENGELLİ DOMAIN LİSTESİ ================= -->
             <div id="tabContent2" style="display:none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 12px; font-weight: bold;">📋 Veritabanındaki Güncel İmzalar:</span>
-                    <input type="text" id="tableFilterInput" class="xp-input" style="max-width: 250px; font-size: 11px;" placeholder="Listede ara (örn: lockbit, ffdc...)" oninput="filterTable()">
+                    <span style="font-size: 12px; font-weight: bold;">📋 Engellenen Zararlı Domainler:</span>
+                    <input type="text" id="tableFilterInput" class="xp-input" style="max-width: 250px; font-size: 11px;" placeholder="Domain filtrele (örn: booking, client...)" oninput="filterTable()">
                 </div>
 
                 <div class="xp-table-container">
@@ -534,12 +511,12 @@
                         <thead>
                             <tr>
                                 <th style="width: 50px;">#</th>
-                                <th>SHA-256 Hash</th>
-                                <th style="width: 280px;">Tehdit Tanımı (Malware)</th>
-                                <th style="width: 80px;">İşlem</th>
+                                <th>Engelli Domain / URL Kuralı</th>
+                                <th style="width: 220px;">Tehdit Türü</th>
+                                <th style="width: 140px;">Kapsam</th>
                             </tr>
                         </thead>
-                        <tbody id="signaturesTableBody">
+                        <tbody id="domainsTableBody">
                             <tr><td colspan="4" style="text-align:center; padding: 20px;">Veritabanı yükleniyor...</td></tr>
                         </tbody>
                     </table>
@@ -549,53 +526,54 @@
             <!-- ================= SEKME 3: İSTEMCİ ENTEGRASYONU ================= -->
             <div id="tabContent3" style="display:none;">
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">📡 Kendi Antivirüsünüze Veritabanı Bağlantısı</legend>
+                    <legend class="xp-legend">📡 Antivirüs Web Kalkanı (PufaAv) İçin API</legend>
                     <p style="font-size: 12px; margin-bottom: 8px;">
-                        Geliştirdiğiniz antivirüs istemcileri (PufaAv, tarayıcı veya arka plan koruma motoru) en güncel imzaları doğrudan bu adresten çekebilir:
+                        Antivirüsünüzün web kalkanı veya ağ filtresi en güncel engelli domain listesini bu adresten çekebilir:
                     </p>
                     <div class="code-box">
-GET https://samettr08.github.io/database.json
+GET https://samettr08.github.io/webdatabase.json
 
-// C# İstemci İle 1 Saniyede Belleğe Alma:
+// C# veya C/C++ İstemci İle Web Kalkanı Kontrolü:
 using (var wc = new System.Net.WebClient()) {
-    string json = wc.DownloadString("https://samettr08.github.io/database.json");
-    // Bellekte HashSet veya Dictionary ile O(1) anında hash kontrolü
+    string json = wc.DownloadString("https://samettr08.github.io/webdatabase.json");
+    // URL normalizasyonu: host = new Uri(targetUrl).Host;
+    // if (blockedDomains.Contains(host)) -> SAYFAYI ENGELLE!
 }
                     </div>
                 </fieldset>
             </div>
         </div>
 
-        <!-- Windows XP Status Bar -->
+        <!-- Status Bar -->
         <div class="xp-statusbar">
-            <span id="lblStatus">Hazır. Windows XP Luna Engine aktif.</span>
-            <span>Konum: <b>samettr08.github.io</b> (Salt-Okunur)</span>
+            <span id="lblStatus">Hazır. Web Database Luna Engine aktif.</span>
+            <span>Konum: <b>samettr08.github.io/webdatabase.html</b></span>
         </div>
     </div>
 </div>
 
 <script>
-    let dbData = { signatures: {} };
+    let webDbData = { rules: {} };
 
-    async function loadDatabase() {
+    async function loadWebDatabase() {
         const lbl = document.getElementById('lblStatus');
-        lbl.textContent = 'database.json indiriliyor...';
+        lbl.textContent = 'webdatabase.json indiriliyor...';
         try {
-            const resp = await fetch('database.json?t=' + Date.now());
-            if (!resp.ok) throw new Error('database.json okunamadı');
-            dbData = await resp.json();
+            const resp = await fetch('webdatabase.json?t=' + Date.now());
+            if (!resp.ok) throw new Error('webdatabase.json okunamadı');
+            webDbData = await resp.json();
 
-            const keys = Object.keys(dbData.signatures || {});
-            const total = dbData.total_signatures || keys.length;
+            const keys = Object.keys(webDbData.rules || {});
+            const total = webDbData.total_domains || keys.length;
 
-            document.getElementById('statTotalCount').textContent = total.toLocaleString('tr-TR');
-            document.getElementById('statLastUpdate').textContent = dbData.updated_at ? new Date(dbData.updated_at).toLocaleString('tr-TR') : 'Şimdi';
+            document.getElementById('statTotalDomains').textContent = total.toLocaleString('tr-TR');
+            document.getElementById('statLastUpdate').textContent = webDbData.updated_at ? new Date(webDbData.updated_at).toLocaleString('tr-TR') : 'Şimdi';
 
-            renderTable(dbData.signatures);
-            lbl.textContent = 'Hazır. ' + keys.length.toLocaleString('tr-TR') + ' adet tehdit imzası aktif.';
+            renderTable(webDbData.rules);
+            lbl.textContent = 'Hazır. ' + keys.length.toLocaleString('tr-TR') + ' adet zararlı domain engellendi.';
         } catch (e) {
             console.error(e);
-            lbl.textContent = 'Uyarı: database.json henüz okunamadı.';
+            lbl.textContent = 'Uyarı: webdatabase.json henüz okunamadı.';
         }
     }
 
@@ -606,37 +584,59 @@ using (var wc = new System.Net.WebClient()) {
         }
     }
 
-    function querySha() {
-        const input = document.getElementById('inputQuerySha').value.trim().toLowerCase();
+    // URL / Domain'den temiz host adını çıkarır
+    function extractHost(urlStr) {
+        let clean = urlStr.trim().toLowerCase();
+        clean = clean.replace(/^(https?:\/\/)/, '');
+        const slashIdx = clean.indexOf('/');
+        if (slashIdx > 0) clean = clean.substring(0, slashIdx);
+        const colonIdx = clean.indexOf(':');
+        if (colonIdx > 0) clean = clean.substring(0, colonIdx);
+        return clean;
+    }
+
+    function checkWebUrl() {
+        const input = document.getElementById('inputQueryUrl').value.trim();
         const alertBox = document.getElementById('queryVerdict');
 
         if (!input) {
-            alert('Lütfen sorgulanacak bir SHA-256 hash giriniz!');
+            alert('Lütfen kontrol edilecek bir URL veya Domain giriniz!');
             return;
         }
 
-        if (dbData.signatures && dbData.signatures[input]) {
-            const threat = dbData.signatures[input];
-            showAlert(alertBox, `🚨 TEHLİKE TESPİT EDİLDİ!\nBu dosya veritabanında bilinen bir zararlı!\nTehdit Tanımı: ${threat}\nSHA-256: ${input}`, false);
+        const host = extractHost(input);
+        const rules = webDbData.rules || {};
+
+        // 1. Doğrudan eşleşme
+        // 2. Alt domain / üst domain eşleşmesi (örn: login.malware.com -> malware.com)
+        let blocked = false;
+        let matchedRule = null;
+        let matchedKey = null;
+
+        if (rules[host]) {
+            blocked = true;
+            matchedRule = rules[host];
+            matchedKey = host;
         } else {
-            showAlert(alertBox, `✅ TEMİZ: Bu SHA-256 imzası veritabanında eşleşmedi (Zararsız veya henüz eklenmemiş).\nSHA-256: ${input}`, true);
+            // Üst domainleri kontrol et
+            const parts = host.split('.');
+            for (let i = 1; i < parts.length - 1; i++) {
+                const parentDomain = parts.slice(i).join('.');
+                if (rules[parentDomain]) {
+                    blocked = true;
+                    matchedRule = rules[parentDomain];
+                    matchedKey = parentDomain;
+                    break;
+                }
+            }
         }
-    }
 
-    async function handleFileScanTest(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const alertBox = document.getElementById('queryVerdict');
-        showAlert(alertBox, `${file.name} taranıyor, SHA-256 hesaplanıyor...`, true);
-
-        const buffer = await file.arrayBuffer();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const sha = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-        document.getElementById('inputQuerySha').value = sha;
-        querySha();
+        if (blocked) {
+            const cat = matchedRule.category || 'Zararlı Web Sitesi';
+            showAlert(alertBox, `🚨 ERİŞİM ENGELLENDİ!\nBu web sitesi veritabanında kayıtlı bir tehdittir!\nEngellenen Kural: ${matchedKey} (Tüm alt sayfalar & alt alan adları)\nTehdit Türü: ${cat}\nSorgulanan URL: ${input}`, false);
+        } else {
+            showAlert(alertBox, `✅ GÜVENLİ: Bu web adresi veritabanında engelli listesinde bulunamadı.\nDomain: ${host}`, true);
+        }
     }
 
     function showAlert(box, msg, isSuccess) {
@@ -645,36 +645,35 @@ using (var wc = new System.Net.WebClient()) {
         box.innerText = msg;
     }
 
-    function renderTable(sigs) {
-        const tbody = document.getElementById('signaturesTableBody');
+    function renderTable(rules) {
+        const tbody = document.getElementById('domainsTableBody');
         tbody.innerHTML = '';
         let index = 1;
 
-        const entries = Object.entries(sigs || {});
+        const entries = Object.entries(rules || {});
         if (entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px;">Veritabanında imza yok.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px;">Veritabanında engelli domain yok.</td></tr>';
             return;
         }
 
         const limit = 400;
         const slice = entries.slice(0, limit);
 
-        for (const [hash, name] of slice) {
+        for (const [domain, info] of slice) {
             const tr = document.createElement('tr');
+            const cat = (typeof info === 'object' && info.category) ? info.category : 'Malware Distribution';
             tr.innerHTML = `
                 <td>${index++}</td>
-                <td title="${hash}">${hash}</td>
-                <td style="color: #b71c1c; font-weight: bold;">⚠️ ${escapeHtml(name)}</td>
-                <td>
-                    <button class="xp-btn" style="padding: 1px 6px; font-size: 10px;" onclick="copyText('${hash}')">Kopyala</button>
-                </td>
+                <td style="color: #b71c1c; font-weight: bold;">🚫 ${domain}</td>
+                <td>${escapeHtml(cat)}</td>
+                <td style="color: #0055ea; font-size: 10px;">Domain + Tüm Alt Sayfalar (*)</td>
             `;
             tbody.appendChild(tr);
         }
 
         if (entries.length > limit) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha imza veritabanında kayıtlı.</td>`;
+            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha zararlı domain veritabanında kayıtlı.</td>`;
             tbody.appendChild(tr);
         }
     }
@@ -682,25 +681,20 @@ using (var wc = new System.Net.WebClient()) {
     function filterTable() {
         const q = document.getElementById('tableFilterInput').value.toLowerCase().trim();
         const filtered = {};
-        for (const [h, n] of Object.entries(dbData.signatures || {})) {
-            if (h.includes(q) || n.toLowerCase().includes(q)) {
-                filtered[h] = n;
+        for (const [d, info] of Object.entries(webDbData.rules || {})) {
+            const cat = (typeof info === 'object' && info.category) ? info.category.toLowerCase() : '';
+            if (d.includes(q) || cat.includes(q)) {
+                filtered[d] = info;
             }
         }
         renderTable(filtered);
-    }
-
-    function copyText(t) {
-        navigator.clipboard.writeText(t).then(() => {
-            document.getElementById('lblStatus').textContent = 'Panoya kopyalandı: ' + t;
-        });
     }
 
     function escapeHtml(s) {
         return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
     }
 
-    window.addEventListener('DOMContentLoaded', loadDatabase);
+    window.addEventListener('DOMContentLoaded', loadWebDatabase);
 </script>
 
 </body>

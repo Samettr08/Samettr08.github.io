@@ -8,22 +8,24 @@ namespace AntivirusHashManager
 {
     /// <summary>
     /// Antivirüs EXE'leriniz arasında milisaniyenin altında iletişim sağlayan Named Pipe Sunucusu.
-    /// Scanner.exe veya Guard.exe gibi diğer programlar buraya bağlanıp anında hash sorgular.
+    /// Scanner.exe, WebGuard.exe veya Guard.exe gibi diğer programlar buraya bağlanıp anında hash veya URL sorgular.
     /// Pipe Yolu: \\.\pipe\AntivirusHashPipe
     /// </summary>
     public class IpcServer
     {
         public const string PIPE_NAME = "AntivirusHashPipe";
         private readonly DatabaseEngine _db;
+        private readonly WebDatabaseEngine _webDb;
         private Thread _listenThread;
         private volatile bool _isRunning = false;
 
         public event Action<string> OnLog;
         public bool IsRunning { get { return _isRunning; } }
 
-        public IpcServer(DatabaseEngine db)
+        public IpcServer(DatabaseEngine db, WebDatabaseEngine webDb = null)
         {
             _db = db;
+            _webDb = webDb;
         }
 
         public void Start()
@@ -100,12 +102,27 @@ namespace AntivirusHashManager
                 string threatName;
                 if (_db.CheckHash(hash, out threatName))
                 {
-                    Log(string.Format("Sorgu: {0} -> [🚨 ZARARLI: {1}]", TruncateHash(hash), threatName));
+                    Log(string.Format("Hash Sorgu: {0} -> [🚨 ZARARLI: {1}]", Truncate(hash), threatName));
                     return "THREAT:" + threatName;
                 }
                 else
                 {
-                    Log(string.Format("Sorgu: {0} -> [✅ TEMİZ]", TruncateHash(hash)));
+                    Log(string.Format("Hash Sorgu: {0} -> [✅ TEMİZ]", Truncate(hash)));
+                    return "CLEAN";
+                }
+            }
+            else if (cmd.StartsWith("CHECK_URL:", StringComparison.OrdinalIgnoreCase))
+            {
+                string url = cmd.Substring(10).Trim();
+                WebBlockRule rule;
+                if (_webDb != null && _webDb.IsBlocked(url, out rule))
+                {
+                    Log(string.Format("URL Sorgu: {0} -> [🚨 ENGELLENDİ: {1} ({2})]", url, rule.Category, rule.Domain));
+                    return "BLOCKED:" + rule.Category + ":" + rule.Domain;
+                }
+                else
+                {
+                    Log(string.Format("URL Sorgu: {0} -> [✅ GÜVENLİ]", url));
                     return "CLEAN";
                 }
             }
@@ -115,7 +132,8 @@ namespace AntivirusHashManager
             }
             else if (cmd.Equals("COUNT", StringComparison.OrdinalIgnoreCase))
             {
-                return "COUNT:" + _db.Count;
+                int webCount = _webDb != null ? _webDb.Count : 0;
+                return string.Format("COUNT:{0}:{1}", _db.Count, webCount);
             }
             else
             {
@@ -123,7 +141,7 @@ namespace AntivirusHashManager
             }
         }
 
-        private string TruncateHash(string h)
+        private string Truncate(string h)
         {
             if (h.Length > 16)
                 return h.Substring(0, 16) + "...";

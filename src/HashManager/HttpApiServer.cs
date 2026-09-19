@@ -10,12 +10,13 @@ namespace AntivirusHashManager
     /// <summary>
     /// Sıfır yönetici izni gerektiren, saf TcpListener tabanlı yüksek hızlı Micro-REST HTTP API Sunucusu.
     /// URL: http://127.0.0.1:8765/
-    /// PufaAv (C/C++), Python, cURL vb. tüm istemciler doğrudan sorgu atabilir.
+    /// PufaAv (C/C++), Python, cURL vb. tüm istemciler hem Hash hem de Zararlı URL sorgulayabilir.
     /// </summary>
     public class HttpApiServer
     {
         private TcpListener _tcpListener;
         private readonly DatabaseEngine _db;
+        private readonly WebDatabaseEngine _webDb;
         private readonly Action _onDataModified;
         private Thread _serverThread;
         private volatile bool _isRunning = false;
@@ -23,11 +24,17 @@ namespace AntivirusHashManager
 
         public event Action<string> OnLog;
 
-        public HttpApiServer(DatabaseEngine db, Action onDataModified, int port = 8765)
+        public HttpApiServer(DatabaseEngine db, WebDatabaseEngine webDb, Action onDataModified, int port = 8765)
         {
             _db = db;
+            _webDb = webDb;
             _onDataModified = onDataModified;
             Port = port;
+        }
+
+        public HttpApiServer(DatabaseEngine db, Action onDataModified, int port = 8765)
+            : this(db, null, onDataModified, port)
+        {
         }
 
         public void Start()
@@ -132,6 +139,27 @@ namespace AntivirusHashManager
                             hash.Length > 16 ? hash.Substring(0, 16) + "..." : hash,
                             isThreat ? ("🚨 " + threatName) : "✅ TEMİZ"));
                     }
+                    else if (path == "/check_url")
+                    {
+                        string url = GetQueryParam(query, "url");
+                        string normDomain = WebDatabaseEngine.NormalizeDomain(url);
+                        WebBlockRule rule = null;
+                        bool isBlocked = _webDb != null && _webDb.IsBlocked(url, out rule);
+
+                        jsonResponse = string.Format(
+                            "{{\"url\":\"{0}\",\"domain\":\"{1}\",\"is_blocked\":{2},\"category\":\"{3}\",\"matched_rule\":\"{4}\",\"total_domains\":{5}}}",
+                            EscapeJson(url),
+                            EscapeJson(normDomain),
+                            isBlocked ? "true" : "false",
+                            EscapeJson(rule != null ? rule.Category : string.Empty),
+                            EscapeJson(rule != null ? rule.Domain : string.Empty),
+                            _webDb != null ? _webDb.Count : 0
+                        );
+
+                        Log(string.Format("HTTP /check_url -> {0} ({1}) -> {2}",
+                            url, normDomain,
+                            isBlocked ? ("🚨 ENGELLENDİ: " + rule.Category) : "✅ GÜVENLİ"));
+                    }
                     else if (path == "/add")
                     {
                         string hash = GetQueryParam(query, "hash");
@@ -146,14 +174,31 @@ namespace AntivirusHashManager
 
                         Log("HTTP /add -> " + hash);
                     }
+                    else if (path == "/add_url")
+                    {
+                        string url = GetQueryParam(query, "url");
+                        string cat = GetQueryParam(query, "category");
+                        if (string.IsNullOrEmpty(cat)) cat = "Malware Distribution";
+
+                        bool added = _webDb != null && _webDb.AddRule(url, cat);
+                        if (_onDataModified != null) _onDataModified();
+
+                        jsonResponse = string.Format("{{\"status\":\"OK\",\"added\":{0},\"url\":\"{1}\",\"total_domains\":{2}}}",
+                            added ? "true" : "false", EscapeJson(url), _webDb != null ? _webDb.Count : 0);
+
+                        Log("HTTP /add_url -> " + url);
+                    }
                     else if (path == "/stats")
                     {
-                        jsonResponse = string.Format("{{\"status\":\"ONLINE\",\"version\":\"2.0\",\"signatures_count\":{0}}}", _db.Count);
+                        jsonResponse = string.Format(
+                            "{{\"status\":\"ONLINE\",\"version\":\"2.0\",\"signatures_count\":{0},\"domains_count\":{1}}}",
+                            _db.Count,
+                            _webDb != null ? _webDb.Count : 0);
                     }
                     else
                     {
                         statusCode = 404;
-                        jsonResponse = "{\"error\":\"Endpoint not found. Use /check?hash=..., /add?hash=...&name=..., or /stats\"}";
+                        jsonResponse = "{\"error\":\"Endpoint not found. Use /check?hash=..., /check_url?url=..., /add?hash=..., /add_url?url=..., or /stats\"}";
                     }
 
                     byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonResponse);
