@@ -814,15 +814,62 @@ using (var wc = new System.Net.WebClient()) {
         }
     }
 
+    // Yerel önbellek yardımcıları (F5 yapılsa bile anında gösterir, 0ms gecikme)
+    function getPendingHashes() {
+        try {
+            return JSON.parse(localStorage.getItem('samet_av_pending_hashes') || '{}');
+        } catch (e) { return {}; }
+    }
+
+    function savePendingHash(hash, name) {
+        try {
+            const p = getPendingHashes();
+            p[hash] = name;
+            localStorage.setItem('samet_av_pending_hashes', JSON.stringify(p));
+        } catch (e) {}
+    }
+
+    function removePendingHash(hash) {
+        try {
+            const p = getPendingHashes();
+            delete p[hash];
+            localStorage.setItem('samet_av_pending_hashes', JSON.stringify(p));
+        } catch (e) {}
+    }
+
     async function loadDatabase() {
         const lbl = document.getElementById('lblStatus');
         lbl.textContent = 'database.json indiriliyor...';
+
+        // Mevcut oturum kontrolü
+        const savedToken = sessionStorage.getItem('samet_av_token');
+        if (savedToken) {
+            decryptedToken = savedToken;
+            setAdminUI(true);
+        }
+
         try {
-            const resp = await fetch('database.json?t=' + Date.now());
+            // Yönetici oturumu açıksa doğrudan raw.githubusercontent üzerinden en son commit'i 0 saniyede al
+            const fetchUrl = decryptedToken
+                ? 'https://raw.githubusercontent.com/Samettr08/Samettr08.github.io/main/database.json?t=' + Date.now()
+                : 'database.json?t=' + Date.now();
+
+            const resp = await fetch(fetchUrl);
             if (!resp.ok) throw new Error('database.json okunamadı');
             dbData = await resp.json();
+            dbData.signatures = dbData.signatures || {};
 
-            const keys = Object.keys(dbData.signatures || {});
+            // Bekleyen yerel imzaları birleştir (F5 yapılsa bile yeni eklenenler anında görünür)
+            const pending = getPendingHashes();
+            for (const [h, n] of Object.entries(pending)) {
+                if (!dbData.signatures[h]) {
+                    dbData.signatures[h] = n;
+                } else {
+                    removePendingHash(h);
+                }
+            }
+
+            const keys = Object.keys(dbData.signatures);
             const total = dbData.total_signatures || keys.length;
 
             document.getElementById('statTotalCount').textContent = total.toLocaleString('tr-TR');
@@ -833,13 +880,6 @@ using (var wc = new System.Net.WebClient()) {
         } catch (e) {
             console.error(e);
             lbl.textContent = 'Uyarı: database.json henüz okunamadı.';
-        }
-
-        // Mevcut oturum kontrolü
-        const savedToken = sessionStorage.getItem('samet_av_token');
-        if (savedToken) {
-            decryptedToken = savedToken;
-            setAdminUI(true);
         }
     }
 
@@ -1141,10 +1181,13 @@ using (var wc = new System.Net.WebClient()) {
             return;
         }
 
-        // Temizle
+        // Önekleri temizle (sha256:, md5:, sha-256:, hash:, 0x, tırnaklar vb.)
+        rawHash = rawHash.replace(/^(sha-?256|sha-?1|md5|hash)\s*[:=]\s*/i, '');
+        rawHash = rawHash.replace(/^0x/i, '');
         rawHash = rawHash.replace(/[^a-f0-9]/gi, '');
+
         if (rawHash.length !== 64 && rawHash.length !== 32) {
-            alert('Geçersiz hash uzunluğu! SHA-256 için 64 karakter, MD5 için 32 karakter olmalıdır.');
+            alert('Geçersiz hash uzunluğu (' + rawHash.length + ' karakter)!\nSHA-256 için tam 64 karakter, MD5 için 32 karakter olmalıdır.\nLütfen tam hash değerini girdiğinizden emin olun.');
             return;
         }
 
@@ -1160,19 +1203,21 @@ using (var wc = new System.Net.WebClient()) {
 
         if (!name) name = 'Trojan.Win32.PufaAv.Generic';
 
+        // 1. ADIM: ANINDA YEREL BELLEK & ÖNBELLEK (0 milisaniye gecikme)
         dbData.signatures = dbData.signatures || {};
         dbData.signatures[rawHash] = name;
+        savePendingHash(rawHash, name);
 
-        // Arayüzü güncelle
+        // Arayüzü anında güncelle
         document.getElementById('statTotalCount').textContent = Object.keys(dbData.signatures).length.toLocaleString('tr-TR');
         renderTable(dbData.signatures);
         hashInput.value = '';
 
-        showAlert(alertBox, `⏳ "${rawHash.substring(0, 16)}..." imzası GitHub Pages bulut veritabanına kaydediliyor...`, true);
+        showAlert(alertBox, `⏳ [1/2] "${rawHash.substring(0, 16)}..." imzası GitHub Pages bulutuna iletiliyor...`, true);
 
         try {
             const commitSha = await syncDatabaseToGitHub(`Web Admin: Add hash ${rawHash.substring(0, 16)} (${name})`);
-            showAlert(alertBox, `✅ BAŞARILI: İmza veritabanına eklendi ve GitHub Pages'e yüklendi!\nCommit: ${commitSha.substring(0, 10)}\nDiğer cihazlardaki antivirüsler güncellemeyi doğrudan alacaktır.`, true);
+            showAlert(alertBox, `✅ BAŞARILI: İmza veritabanına eklendi ve GitHub Pages'e yüklendi!\nCommit: ${commitSha.substring(0, 10)}\n(F5 yapsanız dahi anında korunur ve tüm cihazlara dağıtılır)`, true);
         } catch (e) {
             showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
         }
@@ -1182,6 +1227,7 @@ using (var wc = new System.Net.WebClient()) {
         if (!confirm(`"${hash.substring(0, 16)}..." imzasını veritabanından silmek istediğinize emin misiniz?`)) return;
 
         delete dbData.signatures[hash];
+        removePendingHash(hash);
         document.getElementById('statTotalCount').textContent = Object.keys(dbData.signatures).length.toLocaleString('tr-TR');
         renderTable(dbData.signatures);
 

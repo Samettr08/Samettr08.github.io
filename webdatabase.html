@@ -832,15 +832,62 @@ using (var wc = new System.Net.WebClient()) {
         }
     }
 
+    // Yerel önbellek yardımcıları (F5 yapılsa bile anında gösterir, 0ms gecikme)
+    function getPendingDomains() {
+        try {
+            return JSON.parse(localStorage.getItem('samet_av_pending_domains') || '{}');
+        } catch (e) { return {}; }
+    }
+
+    function savePendingDomain(domain, ruleObj) {
+        try {
+            const p = getPendingDomains();
+            p[domain] = ruleObj;
+            localStorage.setItem('samet_av_pending_domains', JSON.stringify(p));
+        } catch (e) {}
+    }
+
+    function removePendingDomain(domain) {
+        try {
+            const p = getPendingDomains();
+            delete p[domain];
+            localStorage.setItem('samet_av_pending_domains', JSON.stringify(p));
+        } catch (e) {}
+    }
+
     async function loadWebDatabase() {
         const lbl = document.getElementById('lblStatus');
         lbl.textContent = 'webdatabase.json indiriliyor...';
+
+        // Mevcut oturum kontrolü
+        const savedToken = sessionStorage.getItem('samet_av_token');
+        if (savedToken) {
+            decryptedToken = savedToken;
+            setAdminUI(true);
+        }
+
         try {
-            const resp = await fetch('webdatabase.json?t=' + Date.now());
+            // Yönetici oturumu açıksa doğrudan raw.githubusercontent üzerinden en son commit'i 0 saniyede al
+            const fetchUrl = decryptedToken
+                ? 'https://raw.githubusercontent.com/Samettr08/Samettr08.github.io/main/webdatabase.json?t=' + Date.now()
+                : 'webdatabase.json?t=' + Date.now();
+
+            const resp = await fetch(fetchUrl);
             if (!resp.ok) throw new Error('webdatabase.json okunamadı');
             webDbData = await resp.json();
+            webDbData.rules = webDbData.rules || {};
 
-            const keys = Object.keys(webDbData.rules || {});
+            // Bekleyen yerel domainleri birleştir (F5 yapılsa bile yeni eklenenler anında görünür)
+            const pending = getPendingDomains();
+            for (const [d, ruleObj] of Object.entries(pending)) {
+                if (!webDbData.rules[d]) {
+                    webDbData.rules[d] = ruleObj;
+                } else {
+                    removePendingDomain(d);
+                }
+            }
+
+            const keys = Object.keys(webDbData.rules);
             const total = webDbData.total_domains || keys.length;
 
             document.getElementById('statTotalDomains').textContent = total.toLocaleString('tr-TR');
@@ -852,13 +899,6 @@ using (var wc = new System.Net.WebClient()) {
             console.error(e);
             lbl.textContent = 'Uyarı: webdatabase.json henüz okunamadı.';
         }
-
-        // Mevcut oturum kontrolü
-        const savedToken = sessionStorage.getItem('samet_av_token');
-        if (savedToken) {
-            decryptedToken = savedToken;
-            setAdminUI(true);
-        }
     }
 
     function switchTab(idx) {
@@ -868,10 +908,12 @@ using (var wc = new System.Net.WebClient()) {
         }
     }
 
-    // URL / Domain'den temiz host adını çıkarır
+    // URL / Domain'den temiz host adını çıkarır (https//, http//, www. vb. hatalı yazımları da otomatik düzeltir)
     function extractHost(urlStr) {
-        let clean = urlStr.trim().toLowerCase();
-        clean = clean.replace(/^(https?:\/\/)/, '');
+        let clean = (urlStr || '').trim().toLowerCase();
+        // Protokolü temizle (https://, http://, https//, http//, https:/, http:)
+        clean = clean.replace(/^https?:?\/*/, '');
+        clean = clean.replace(/^www\./, '');
         const slashIdx = clean.indexOf('/');
         if (slashIdx >= 0) clean = clean.substring(0, slashIdx);
         const colonIdx = clean.indexOf(':');
@@ -1185,7 +1227,7 @@ using (var wc = new System.Net.WebClient()) {
 
         const domain = extractHost(rawUrl);
         if (!domain || !domain.includes('.')) {
-            alert('Geçersiz domain formatı! Örn: malware.com veya badsite.org');
+            alert('Geçersiz domain formatı! Lütfen geçerli bir internet adresi girin (örn: malware.com veya badsite.org).');
             return;
         }
 
@@ -1195,24 +1237,28 @@ using (var wc = new System.Net.WebClient()) {
             return;
         }
 
-        webDbData.rules = webDbData.rules || {};
-        webDbData.rules[domain] = {
+        const ruleObj = {
             category: category,
             wildcard: true,
             block_all_subpages: true,
             added_at: new Date().toISOString().split('T')[0]
         };
 
-        // Arayüzü güncelle
+        // 1. ADIM: ANINDA YEREL BELLEK & ÖNBELLEK GÜNCELLEMESİ (0 milisaniye gecikme)
+        webDbData.rules = webDbData.rules || {};
+        webDbData.rules[domain] = ruleObj;
+        savePendingDomain(domain, ruleObj);
+
+        // Arayüzü anında güncelle
         document.getElementById('statTotalDomains').textContent = Object.keys(webDbData.rules).length.toLocaleString('tr-TR');
         renderTable(webDbData.rules);
         urlInput.value = '';
 
-        showAlert(alertBox, `⏳ "${domain}" ve tüm alt sayfaları GitHub Pages bulut veritabanına kaydediliyor...`, true);
+        showAlert(alertBox, `⏳ [1/2] "${domain}" ve tüm alt sayfaları GitHub Pages bulutuna iletiliyor...`, true);
 
         try {
             const commitSha = await syncWebDatabaseToGitHub(`Web Admin: Block domain ${domain} (${category})`);
-            showAlert(alertBox, `✅ BAŞARILI: Web engeli oluşturuldu ve GitHub Pages'e yüklendi!\nEngellenen Kural: ${domain} (Kök domain, *.${domain} ve tüm alt sayfalar)\nCommit: ${commitSha.substring(0, 10)}\nAntivirüs web kalkanları güncellemeyi doğrudan alacaktır.`, true);
+            showAlert(alertBox, `✅ BAŞARILI: Web engeli oluşturuldu ve GitHub Pages'e yüklendi!\nEngellenen Kural: ${domain} (Kök domain, *.${domain} ve tüm alt sayfalar)\nCommit: ${commitSha.substring(0, 10)}\n(F5 yapsanız dahi anında korunur ve antivirüsler tarafından çekilir)`, true);
         } catch (e) {
             showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
         }
@@ -1222,6 +1268,7 @@ using (var wc = new System.Net.WebClient()) {
         if (!confirm(`"${domain}" web engelini veritabanından silmek istediğinize emin misiniz?`)) return;
 
         delete webDbData.rules[domain];
+        removePendingDomain(domain);
         document.getElementById('statTotalDomains').textContent = Object.keys(webDbData.rules).length.toLocaleString('tr-TR');
         renderTable(webDbData.rules);
 
