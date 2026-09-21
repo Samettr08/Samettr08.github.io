@@ -53,6 +53,16 @@ namespace AntivirusHashManager
                 return result;
             }
 
+            // Yayın öncesi güvenlik kontrolü: hatalı bir veritabanı TÜM istemcilere ulaşır.
+            string guardReason = PublishGuard.Check(hashDbPath, webDbPath);
+            if (guardReason != null)
+            {
+                result.Success = false;
+                result.Message = "YAYIN DURDURULDU (güvenlik kontrolü): " + guardReason;
+                Log(logger, result.Message);
+                return result;
+            }
+
             // 1. Öncelik: Yerel .git klasörü ve git.exe varsa yerel Git CLI ile pushla
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             string gitDir = Path.Combine(baseDir, ".git");

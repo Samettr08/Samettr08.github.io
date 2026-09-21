@@ -88,10 +88,50 @@ namespace AntivirusHashManager
             return clean.Trim('.', ' ');
         }
 
+        // Asla engellenmemesi gereken altyapı alan adları (tam eşleşme): bunlardan biri
+        // listeye girerse istemci kendi imza indirmesini, Windows Update'i ya da tüm
+        // github.io sitelerini kilitleyebilir. (Alt alan adları - örn. kotu.github.io -
+        // serbesttir; sadece bu kök/altyapı adlarının kendisi reddedilir.)
+        private static readonly HashSet<string> NeverBlock = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "github.io", "github.com", "githubusercontent.com", "raw.githubusercontent.com",
+            "samettr08.github.io", "microsoft.com", "windows.com", "windowsupdate.com", "live.com",
+            "office.com", "google.com", "googleapis.com", "gstatic.com", "apple.com", "cloudflare.com",
+            "abuse.ch", "urlhaus.abuse.ch", "feodotracker.abuse.ch", "localhost"
+        };
+
+        /// <summary>
+        /// Geçerli, IP olmayan, en az 2 etiketli, sözdizimi doğru ve "asla engelleme" listesinde
+        /// olmayan bir alan adı mı? (Bozuk/tehlikeli girdiyi kaynağında keser.)
+        /// </summary>
+        public static bool IsAcceptableDomain(string domain)
+        {
+            if (string.IsNullOrEmpty(domain) || domain.Length > 253 || !domain.Contains(".")) return false;
+            if (NeverBlock.Contains(domain)) return false;
+
+            var labels = domain.Split('.');
+            if (labels.Length < 2) return false;
+            bool allNumeric = true;
+            foreach (var label in labels)
+            {
+                if (label.Length == 0 || label.Length > 63) return false;
+                if (label[0] == '-' || label[label.Length - 1] == '-') return false;
+                foreach (char c in label)
+                {
+                    bool ok = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-';
+                    if (!ok) return false;
+                    if (c < '0' || c > '9') allNumeric = false;
+                }
+            }
+            if (allNumeric) return false; // 1.2.3.4 gibi IP değişmezi alan adı değildir
+            string tld = labels[labels.Length - 1];
+            return tld.Length >= 2 && !(tld[0] >= '0' && tld[0] <= '9');
+        }
+
         public bool AddRule(string rawUrlOrDomain, string category = "Malware Distribution")
         {
             string domain = NormalizeDomain(rawUrlOrDomain);
-            if (string.IsNullOrEmpty(domain) || !domain.Contains(".")) return false;
+            if (!IsAcceptableDomain(domain)) return false;
 
             if (string.IsNullOrWhiteSpace(category)) category = "Malware Distribution";
 
@@ -241,7 +281,7 @@ namespace AntivirusHashManager
                     }
 
                     domain = NormalizeDomain(domain);
-                    if (!string.IsNullOrEmpty(domain) && domain.Contains("."))
+                    if (IsAcceptableDomain(domain))
                     {
                         if (!newRules.ContainsKey(domain))
                             newRules[domain] = cat;
@@ -308,11 +348,16 @@ namespace AntivirusHashManager
                                 string domainKey = line.Substring(0, colonIdx).Trim().Trim('"', ' ');
                                 domainKey = NormalizeDomain(domainKey);
 
-                                if (!string.IsNullOrEmpty(domainKey) && domainKey.Contains("."))
+                                if (IsAcceptableDomain(domainKey))
                                 {
                                     string cat = "Malware Distribution";
                                     var match = Regex.Match(line, "\"category\"\\s*:\\s*\"([^\"]+)\"");
                                     if (match.Success) cat = match.Groups[1].Value;
+
+                                    // Orijinal eklenme tarihi korunur (eskiden her yüklemede "bugün" yazılıyordu).
+                                    string added = DateTime.UtcNow.ToString("yyyy-MM-dd");
+                                    var addedMatch = Regex.Match(line, "\"added_at\"\\s*:\\s*\"([^\"]+)\"");
+                                    if (addedMatch.Success) added = addedMatch.Groups[1].Value;
 
                                     var rule = new WebBlockRule
                                     {
@@ -320,7 +365,7 @@ namespace AntivirusHashManager
                                         Category = cat,
                                         Wildcard = true,
                                         BlockAllSubpages = true,
-                                        AddedAt = DateTime.UtcNow.ToString("yyyy-MM-dd")
+                                        AddedAt = added
                                     };
 
                                     if (!_rules.ContainsKey(domainKey))

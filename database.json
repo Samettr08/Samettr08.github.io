@@ -1,7 +1,7 @@
 ﻿{
   "schema_version": "1.0",
   "database_name": "Antivirus Signature Database",
-  "updated_at": "2026-09-19T17:35:43Z",
+  "updated_at": "2026-09-19T17:52:50Z",
   "total_signatures": 30618,
   "hash_type": "SHA256/MD5",
   "signatures": {

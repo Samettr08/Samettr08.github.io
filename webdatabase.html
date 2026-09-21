@@ -112,11 +112,36 @@
             background: linear-gradient(180deg, #f2725e 0%, #d83a21 50%, #ba2008 51%, #c9290f 100%);
         }
 
+        /* Menu Bar */
+        .xp-menubar {
+            background: #f0ede0;
+            border-bottom: 1px solid #dcd8cf;
+            padding: 3px 8px;
+            display: flex;
+            gap: 14px;
+            font-size: 11px;
+        }
+
+        .xp-menu-item {
+            color: #222;
+            cursor: pointer;
+        }
+        .xp-menu-item:hover {
+            color: #0055ea;
+        }
+
         /* Navigation Bar (Switch between Hashes and Web DB) */
         .xp-nav-bar {
             background: #dcd8cf;
             border-bottom: 2px solid #919b9c;
             padding: 6px 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .xp-nav-left {
             display: flex;
             gap: 8px;
             align-items: center;
@@ -146,6 +171,32 @@
             color: #ffffff;
             border-color: #002266;
             text-shadow: 1px 1px 1px #001f5c;
+        }
+
+        .xp-admin-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #ffdf9e 10%, #ffc04d 50%, #ffa500 100%);
+            border: 1px solid #b36b00;
+            border-radius: 3px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #4a2800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .xp-admin-btn:hover {
+            background: linear-gradient(180deg, #ffffff 0%, #ffe9b8 10%, #ffd06b 50%, #ffb733 100%);
+            border-color: #e68a00;
+        }
+
+        .xp-admin-btn.active {
+            background: linear-gradient(180deg, #e6ffe6 0%, #99ff99 50%, #33cc33 100%);
+            border-color: #006600;
+            color: #003300;
         }
 
         .xp-body {
@@ -223,12 +274,23 @@
             font-family: 'Consolas', 'Courier New', monospace;
             outline: none;
             flex: 1;
-            min-width: 280px;
+            min-width: 250px;
         }
 
         .xp-input:focus {
             border-color: #0055ea;
             box-shadow: 0 0 3px rgba(0, 85, 234, 0.5);
+        }
+
+        .xp-select {
+            background: #ffffff;
+            border: 1px solid var(--xp-border-soft);
+            border-radius: 2px;
+            padding: 5px 8px;
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+            min-width: 180px;
         }
 
         /* Buttons */
@@ -248,89 +310,99 @@
             color: #000;
             cursor: pointer;
             outline: none;
-            box-shadow: inset 0 1px 0 #ffffff, 0 1px 1px rgba(0,0,0,0.15);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.2);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            user-select: none;
         }
 
         .xp-btn:hover {
             border-color: #f7a01d;
-            box-shadow: 0 0 3px #f7a01d;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 0 3px #f7a01d;
         }
 
         .xp-btn:active {
-            background: #ddd9cd;
-            border-color: #003c74;
-            padding: 6px 15px 4px 17px;
+            background: linear-gradient(180deg, #cecac0 0%, #e0ded3 50%, #ffffff 100%);
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .xp-btn-blue {
-            background: linear-gradient(180deg, #60a8f8 0%, #2e7be6 50%, #135fc7 100%);
-            border-color: #003399;
-            color: #fff;
+            background: linear-gradient(180deg, #4292ff 0%, #1765dd 50%, #0d54c7 100%);
+            color: #ffffff;
+            border-color: #002266;
             text-shadow: 1px 1px 1px #001f5c;
         }
 
-        /* Security Banner */
-        .xp-security-banner {
-            background: #fff8e1;
-            border: 1px solid #ffe082;
-            border-radius: 4px;
-            padding: 8px 12px;
-            font-size: 11px;
-            color: #795548;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+        .xp-btn-blue:hover {
+            background: linear-gradient(180deg, #5da2ff 0%, #2975eb 50%, #1260db 100%);
         }
 
-        /* Stats Bar */
+        .xp-btn-red {
+            background: linear-gradient(180deg, #ff7a66 0%, #d83a21 50%, #ba2008 100%);
+            color: #ffffff;
+            border-color: #660000;
+            text-shadow: 1px 1px 1px #330000;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
+        .xp-btn-red:hover {
+            background: linear-gradient(180deg, #ff9482 0%, #e84b33 50%, #cf2d13 100%);
+        }
+
+        .xp-btn-green {
+            background: linear-gradient(180deg, #66cc66 0%, #228822 50%, #116611 100%);
+            color: #ffffff;
+            border-color: #003300;
+            text-shadow: 1px 1px 1px #002200;
+        }
+
+        /* Stats Grid */
         .xp-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 8px;
-            margin-bottom: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .xp-stat-box {
             background: #ffffff;
             border: 1px solid var(--xp-border-soft);
             border-radius: 3px;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: inset 0 1px 2px #f0f0f0;
         }
 
         .xp-stat-lbl {
             font-size: 11px;
             color: #666;
-            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
         }
 
         .xp-stat-val {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: #cc0000;
+            color: #003399;
             font-family: 'Consolas', monospace;
         }
 
         /* Alerts */
         .xp-alert {
+            display: none;
             padding: 10px 14px;
             border-radius: 3px;
-            font-size: 13px;
-            margin-top: 8px;
-            display: none;
-            font-weight: bold;
+            margin-top: 10px;
+            font-size: 12px;
             line-height: 1.5;
+            white-space: pre-line;
         }
 
         .xp-alert-success {
             background: #e8f5e9;
-            border: 1px solid #4caf50;
+            border: 2px solid #4caf50;
             color: #1b5e20;
         }
 
@@ -340,9 +412,15 @@
             color: #b71c1c;
         }
 
+        .xp-alert-info {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            color: #0d47a1;
+        }
+
         /* Table */
         .xp-table-container {
-            max-height: 320px;
+            max-height: 360px;
             overflow-y: auto;
             background: #ffffff;
             border: 1px solid var(--xp-border-soft);
@@ -366,6 +444,7 @@
             font-weight: bold;
             font-size: 11px;
             color: #333;
+            z-index: 2;
         }
 
         table.xp-table td {
@@ -403,6 +482,75 @@
             overflow-x: auto;
             line-height: 1.4;
         }
+
+        /* Modal Dialog (Windows XP Style) */
+        .xp-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .xp-modal {
+            background: var(--xp-bg);
+            border: 3px solid var(--xp-blue);
+            border-top: none;
+            border-radius: 6px 6px 0 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 420px;
+            overflow: hidden;
+            animation: popIn 0.15s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .xp-modal-titlebar {
+            background: linear-gradient(180deg, #0058ee 0%, #3593ff 6%, #0054e3 100%);
+            padding: 4px 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .xp-modal-body {
+            padding: 16px;
+        }
+
+        .xp-modal-footer {
+            background: #e0ded3;
+            border-top: 1px solid #919b9c;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .admin-banner {
+            display: none;
+            background: linear-gradient(180deg, #fff3cd 0%, #ffeeba 100%);
+            border: 1px solid #ffeeba;
+            border-left: 5px solid #ff9900;
+            padding: 8px 12px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            color: #856404;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -413,35 +561,76 @@
         <div class="xp-titlebar">
             <div class="xp-title-left">
                 <span class="xp-shield-icon">🌐</span>
-                <span>SAMET-AV MALICIOUS WEB &amp; DOMAIN DATABASE (Web Database v1.0)</span>
+                <span>SAMET-AV MALICIOUS WEB &amp; DOMAIN DATABASE (Windows XP Edition)</span>
             </div>
             <div class="xp-controls">
                 <div class="xp-btn-ctrl xp-min">_</div>
                 <div class="xp-btn-ctrl xp-max">□</div>
-                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV Web Veritabanı Aktif.')">✕</div>
+                <div class="xp-btn-ctrl xp-close" onclick="alert('Samet-AV Web Kalkanı Aktif.')">✕</div>
             </div>
         </div>
 
-        <!-- Üst Gezinme Çubuğu (Veritabanları Arası Geçiş) -->
+        <!-- Menu Bar -->
+        <div class="xp-menubar">
+            <span class="xp-menu-item"><b>Dosya</b></span>
+            <span class="xp-menu-item">Görünüm</span>
+            <span class="xp-menu-item" onclick="location.reload()">Yenile (F5)</span>
+            <span class="xp-menu-item" onclick="openAdminModal()">Yönetici Girişi</span>
+            <span class="xp-menu-item" onclick="alert('Samet-AV Web & Domain Database v3.0\nWeb üzerinden doğrudan bulut veritabanı yönetimi (PIN Korumalı).\nZararlı siteler, phishing ve botnet engeli.')">Hakkında</span>
+        </div>
+
+        <!-- Navigation Bar (Switch between Hashes and Web DB) -->
         <div class="xp-nav-bar">
-            <a href="index.html" class="xp-nav-link">
-                <span>🛡️</span> Dosya Hash Veritabanı (index.html)
-            </a>
-            <a href="webdatabase.html" class="xp-nav-link active">
-                <span>🌐</span> Zararlı Web &amp; Domain Veritabanı (webdatabase.html)
-            </a>
-            <div style="margin-left: auto; font-size: 11px; color: #555;">
-                Merkezi Bulut: <b>samettr08.github.io</b>
+            <div class="xp-nav-left">
+                <a href="index.html" class="xp-nav-link">🛡️ Dosya Hash Veritabanı (database.json)</a>
+                <a href="webdatabase.html" class="xp-nav-link active">🌐 Zararlı Web &amp; Domain Veritabanı (webdatabase.json)</a>
             </div>
+            <button id="btnAdminAuth" class="xp-admin-btn" onclick="handleAdminButtonClick()">
+                <span id="adminBtnIcon">🔐</span> <span id="adminBtnText">Yönetici Girişi (PIN)</span>
+            </button>
         </div>
 
         <div class="xp-body">
-            <!-- Güvenlik Bilgilendirmesi -->
-            <div class="xp-security-banner">
-                <span style="font-size: 16px;">🔒</span>
+            <!-- Yönetici Aktif Bannerı -->
+            <div id="adminBanner" class="admin-banner" style="display: none;">
                 <div>
-                    <b>Güvenli Salt-Okunur Web Veritabanı:</b> Bu sayfa ziyaretçiler ve antivirüs istemcileri için genel sorgulama amaçlıdır. Yeni web ve domain engelleri yalnızca yetkili <b>HashManager.exe</b> üzerinden eklenip güncellenir.
+                    <b>👑 Yönetici Modu Aktif:</b> Doğrudan bu web sayfası üzerinden zararlı web/domain engeli ekleyebilir, silebilir ve tek tıkla GitHub Pages bulutuna kaydedebilirsiniz!
                 </div>
+                <button class="xp-btn xp-btn-red" style="font-size:11px;" onclick="logoutAdmin()">🚪 Çıkış Yap</button>
+            </div>
+
+            <!-- Yönetici Kontrol İstasyonu (Sadece PIN girildiğinde açılır) -->
+            <div id="adminPanel" style="display: none;">
+                <fieldset class="xp-groupbox" style="border: 2px solid #b71c1c; background: rgba(255, 240, 240, 0.7);">
+                    <legend class="xp-legend" style="color: #b71c1c;">🚫 Yönetici İstasyonu: Yeni Web/Domain Engeli Ekle &amp; GitHub Pages'e Kaydet</legend>
+                    
+                    <div class="form-row">
+                        <label class="xp-label" for="adminInputUrl">URL / Domain:</label>
+                        <input type="text" id="adminInputUrl" class="xp-input" placeholder="https://malware.com veya phishing-site.net veya evil.org/sub/page...">
+                    </div>
+
+                    <div class="form-row">
+                        <label class="xp-label" for="adminSelectCategory">Tehdit Türü:</label>
+                        <select id="adminSelectCategory" class="xp-select">
+                            <option value="Malware Distribution">Malware Distribution (Zararlı Yazılım Dağıtımı)</option>
+                            <option value="Phishing / Oltalama">Phishing / Oltalama (Sahte Giriş Sayfası)</option>
+                            <option value="C2 Botnet">C2 Botnet (Komuta Kontrol Sunucusu)</option>
+                            <option value="Scam / Dolandırıcılık">Scam / Dolandırıcılık</option>
+                            <option value="Kripto Madenci">Kripto Madenci (Coin Miner)</option>
+                            <option value="Zararlı Reklam (Adware)">Zararlı Reklam (Adware / Exploit)</option>
+                            <option value="Şüpheli Web Sitesi">Şüpheli Web Sitesi</option>
+                        </select>
+                        <button class="xp-btn xp-btn-red" onclick="adminAddWebRule()">
+                            <span>🚫</span> Web Engeli Oluştur &amp; Buluta Kaydet
+                        </button>
+                        <button class="xp-btn" onclick="document.getElementById('adminImportTxt').click()">
+                            <span>📂</span> Toplu Domain TXT İçe Aktar
+                        </button>
+                        <input type="file" id="adminImportTxt" accept=".txt" style="display:none;" onchange="adminHandleImportTxt(event)">
+                    </div>
+
+                    <div id="adminStatusAlert" class="xp-alert"></div>
+                </fieldset>
             </div>
 
             <!-- XP Sekmeler -->
@@ -458,32 +647,32 @@
                     <span class="xp-stat-val" id="statTotalDomains">Yükleniyor...</span>
                 </div>
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">Koruma Durumu</span>
-                    <span class="xp-stat-val" style="color: #008800; font-size: 13px;">🟢 CANLI &amp; AKTİF</span>
+                    <span class="xp-stat-lbl">Kapsam Seviyesi</span>
+                    <span class="xp-stat-val" style="color: #b71c1c; font-size: 13px;">🛡️ DOMAIN + *. + /*</span>
                 </div>
                 <div class="xp-stat-box">
                     <span class="xp-stat-lbl">Son Güncelleme</span>
-                    <span class="xp-stat-val" style="font-size: 12px; color: #000;" id="statLastUpdate">--</span>
+                    <span class="xp-stat-val" style="font-size: 12px;" id="statLastUpdate">--</span>
                 </div>
                 <div class="xp-stat-box">
-                    <span class="xp-stat-lbl">Kapsam</span>
-                    <span class="xp-stat-val" style="font-size: 12px; color: #0055ea;">Domain + Tüm Alt Sayfalar</span>
+                    <span class="xp-stat-lbl">Veritabanı Durumu</span>
+                    <span class="xp-stat-val" style="font-size: 13px; color: #008800;">🟢 CANLI BULUT KORUMASI</span>
                 </div>
             </div>
 
-            <!-- ================= SEKME 1: URL/DOMAIN SORGULAMA ================= -->
+            <!-- ================= SEKME 1: URL SORGULAMA ================= -->
             <div id="tabContent1">
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🔍 Canlı URL &amp; Web Sitesi Güvenlik Testi</legend>
+                    <legend class="xp-legend">🔍 URL ve Web Sitesi Güvenlik Doğrulaması</legend>
                     <p style="font-size: 11px; color: #555; margin-bottom: 10px;">
-                        Kontrol etmek istediğiniz web sitesini veya bağlantıyı girin (Bir ana domain engellendiğinde, tüm alt sayfaları ve alt alan adları da otomatik engellenir):
+                        Şüpheli bir web bağlantısını veya alan adını sorgulayın. Veritabanındaki kurallar kök domain, tüm alt alan adları (*.domain) ve tüm alt sayfaları (/*) kapsar:
                     </p>
 
                     <div class="form-row">
-                        <label class="xp-label" for="inputQueryUrl">URL veya Domain:</label>
-                        <input type="text" id="inputQueryUrl" class="xp-input" placeholder="Örn: https://malware.com/login veya 0following.com" autocomplete="off">
+                        <label class="xp-label" for="inputQueryUrl">Kontrol Edilecek Adres:</label>
+                        <input type="text" id="inputQueryUrl" class="xp-input" placeholder="https://malware.com/sub/page veya domain.com girin...">
                         <button class="xp-btn xp-btn-blue" onclick="checkWebUrl()">
-                            <span>🔎</span> Web Engelini Kontrol Et
+                            <span>🔎</span> Engeli Kontrol Et
                         </button>
                     </div>
 
@@ -491,10 +680,11 @@
                 </fieldset>
 
                 <fieldset class="xp-groupbox">
-                    <legend class="xp-legend">🛡️ Web Veritabanı ve Yönetim</legend>
-                    <p style="font-size: 12px; line-height: 1.5; color: #333;">
-                        • <b>Yeni Web Engeli Ekleme:</b> Yeni zararlı siteleri eklemek, toplu domain listesi yüklemek ve GitHub'a otomatik push etmek için <b>HashManager.exe</b> aracını kullanın.<br>
-                        • <b>Ham Web Veritabanını İndir:</b> <a href="webdatabase.json" download="webdatabase.json" style="color: #0055ea; font-weight: bold;">webdatabase.json (Tüm Engelli Siteler)</a>
+                    <legend class="xp-legend">🌐 Kapsam ve Kurallar Hakkında</legend>
+                    <p style="font-size: 12px; line-height: 1.6; color: #333;">
+                        • <b>Otomatik Kök Domain Engelleme:</b> Bir link girdiğinizde (örn: <code>https://malware.com/bad/page?id=1</code>), sistem otomatik olarak <code>malware.com</code> kök alanını belirler ve tüm alt sayfalarını engeller.<br>
+                        • <b>Wildcard Alt Alan Koruması:</b> Engellenen bir alan adı (örn: <code>malware.com</code>), tüm alt alan adlarını (örn: <code>login.malware.com</code>, <code>secure.malware.com</code>) da otomatik olarak engeller.<br>
+                        • <b>Ham Web Veritabanı İndir:</b> <a href="webdatabase.json" download="webdatabase.json" style="color: #0055ea; font-weight: bold;">webdatabase.json (Tüm Engelli Domainler)</a>
                     </p>
                 </fieldset>
             </div>
@@ -514,10 +704,11 @@
                                 <th>Engelli Domain / URL Kuralı</th>
                                 <th style="width: 220px;">Tehdit Türü</th>
                                 <th style="width: 140px;">Kapsam</th>
+                                <th id="thAction" style="width: 80px; display: none;">İşlem</th>
                             </tr>
                         </thead>
                         <tbody id="domainsTableBody">
-                            <tr><td colspan="4" style="text-align:center; padding: 20px;">Veritabanı yükleniyor...</td></tr>
+                            <tr><td colspan="5" style="text-align:center; padding: 20px;">Veritabanı yükleniyor...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -552,8 +743,78 @@ using (var wc = new System.Net.WebClient()) {
     </div>
 </div>
 
+<!-- ================= WINDOWS XP PIN MODAL ================= -->
+<div id="pinModal" class="xp-modal-overlay">
+    <div class="xp-modal">
+        <div class="xp-modal-titlebar">
+            <span>🔐 Yönetici Doğrulaması (PIN Girişi)</span>
+            <div class="xp-btn-ctrl xp-close" onclick="closeAdminModal()">✕</div>
+        </div>
+        <div class="xp-modal-body">
+            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 14px;">
+                <div style="font-size: 32px;">🛡️</div>
+                <div style="font-size: 12px; line-height: 1.4;">
+                    <b>Bu işlem yetkili erişim gerektirir.</b><br>
+                    Zararlı web veritabanına domain eklemek veya silmek için lütfen 4 haneli PIN kodunuzu giriniz:
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                <input type="password" id="inputPinCode" class="xp-input" maxlength="6" 
+                       style="font-size: 20px; text-align: center; letter-spacing: 8px; width: 150px; font-weight: bold;" 
+                       placeholder="••••" onkeydown="if(event.key==='Enter') submitPinCode()">
+            </div>
+
+            <div id="pinModalError" style="display: none; color: #cc0000; font-size: 11px; text-align: center; font-weight: bold;">
+                ❌ Hatalı PIN kodu! Lütfen tekrar deneyiniz.
+            </div>
+        </div>
+        <div class="xp-modal-footer">
+            <button class="xp-btn xp-btn-blue" onclick="submitPinCode()">Tamam</button>
+            <button class="xp-btn" onclick="closeAdminModal()">İptal</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Güvenli şifreli anahtar kasası (AES-GCM & PBKDF2 ile korunur, kaynak kodunda plaintext anahtar bulunmaz)
+    const CRYPTO_CONFIG = {
+        saltB64: 'uWNZJ60ijVEe7qg95n9rfA==',
+        ivB64: 'oU6Rn0Dbih4qjd+D',
+        cipherB64: 'DIpm+4KNM+8EDNVvrBy2LUgBHo90uVmeB10HZzEgszPuki2RoAOv8F3iTcfwazVf7HZP9cXBDXI='
+    };
+
     let webDbData = { rules: {} };
+    let decryptedToken = null;
+
+    // WebCrypto AES-GCM Decryption (PIN doğrulaması)
+    async function unlockWithPin(pin) {
+        try {
+            const salt = Uint8Array.from(atob(CRYPTO_CONFIG.saltB64), c => c.charCodeAt(0));
+            const iv = Uint8Array.from(atob(CRYPTO_CONFIG.ivB64), c => c.charCodeAt(0));
+            const cipher = Uint8Array.from(atob(CRYPTO_CONFIG.cipherB64), c => c.charCodeAt(0));
+
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                cipher
+            );
+
+            return new TextDecoder().decode(decrypted);
+        } catch (e) {
+            return null;
+        }
+    }
 
     async function loadWebDatabase() {
         const lbl = document.getElementById('lblStatus');
@@ -575,6 +836,13 @@ using (var wc = new System.Net.WebClient()) {
             console.error(e);
             lbl.textContent = 'Uyarı: webdatabase.json henüz okunamadı.';
         }
+
+        // Mevcut oturum kontrolü
+        const savedToken = sessionStorage.getItem('samet_av_token');
+        if (savedToken) {
+            decryptedToken = savedToken;
+            setAdminUI(true);
+        }
     }
 
     function switchTab(idx) {
@@ -589,10 +857,11 @@ using (var wc = new System.Net.WebClient()) {
         let clean = urlStr.trim().toLowerCase();
         clean = clean.replace(/^(https?:\/\/)/, '');
         const slashIdx = clean.indexOf('/');
-        if (slashIdx > 0) clean = clean.substring(0, slashIdx);
+        if (slashIdx >= 0) clean = clean.substring(0, slashIdx);
         const colonIdx = clean.indexOf(':');
-        if (colonIdx > 0) clean = clean.substring(0, colonIdx);
-        return clean;
+        if (colonIdx >= 0) clean = clean.substring(0, colonIdx);
+        if (clean.startsWith('*.')) clean = clean.substring(2);
+        return clean.replace(/^[.\s]+|[.\s]+$/g, '');
     }
 
     function checkWebUrl() {
@@ -607,8 +876,6 @@ using (var wc = new System.Net.WebClient()) {
         const host = extractHost(input);
         const rules = webDbData.rules || {};
 
-        // 1. Doğrudan eşleşme
-        // 2. Alt domain / üst domain eşleşmesi (örn: login.malware.com -> malware.com)
         let blocked = false;
         let matchedRule = null;
         let matchedKey = null;
@@ -618,7 +885,7 @@ using (var wc = new System.Net.WebClient()) {
             matchedRule = rules[host];
             matchedKey = host;
         } else {
-            // Üst domainleri kontrol et
+            // Üst domainleri kontrol et (sub.malware.com -> malware.com)
             const parts = host.split('.');
             for (let i = 1; i < parts.length - 1; i++) {
                 const parentDomain = parts.slice(i).join('.');
@@ -652,12 +919,13 @@ using (var wc = new System.Net.WebClient()) {
 
         const entries = Object.entries(rules || {});
         if (entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px;">Veritabanında engelli domain yok.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px;">Veritabanında engelli domain yok.</td></tr>';
             return;
         }
 
         const limit = 400;
         const slice = entries.slice(0, limit);
+        const isAdmin = !!decryptedToken;
 
         for (const [domain, info] of slice) {
             const tr = document.createElement('tr');
@@ -666,14 +934,15 @@ using (var wc = new System.Net.WebClient()) {
                 <td>${index++}</td>
                 <td style="color: #b71c1c; font-weight: bold;">🚫 ${domain}</td>
                 <td>${escapeHtml(cat)}</td>
-                <td style="color: #0055ea; font-size: 10px;">Domain + Tüm Alt Sayfalar (*)</td>
+                <td style="color: #0055ea; font-size: 11px;">Kök Domain + *. + /* (Tümü)</td>
+                ${isAdmin ? `<td><button class="xp-btn xp-btn-red" onclick="adminDeleteDomain('${domain}')">✕ Sil</button></td>` : ''}
             `;
             tbody.appendChild(tr);
         }
 
         if (entries.length > limit) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha zararlı domain veritabanında kayıtlı.</td>`;
+            tr.innerHTML = `<td colspan="${isAdmin ? 5 : 4}" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha zararlı domain veritabanında kayıtlı.</td>`;
             tbody.appendChild(tr);
         }
     }
@@ -692,6 +961,314 @@ using (var wc = new System.Net.WebClient()) {
 
     function escapeHtml(s) {
         return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+    }
+
+    // ================= YÖNETİCİ & PIN MODAL İŞLEMLERİ =================
+
+    function handleAdminButtonClick() {
+        if (decryptedToken) {
+            logoutAdmin();
+        } else {
+            openAdminModal();
+        }
+    }
+
+    function openAdminModal() {
+        document.getElementById('inputPinCode').value = '';
+        document.getElementById('pinModalError').style.display = 'none';
+        document.getElementById('pinModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('inputPinCode').focus(), 50);
+    }
+
+    function closeAdminModal() {
+        document.getElementById('pinModal').style.display = 'none';
+    }
+
+    async function submitPinCode() {
+        const pin = document.getElementById('inputPinCode').value.trim();
+        if (!pin) return;
+
+        const token = await unlockWithPin(pin);
+        if (token) {
+            decryptedToken = token;
+            sessionStorage.setItem('samet_av_token', token);
+            closeAdminModal();
+            setAdminUI(true);
+            renderTable(webDbData.rules);
+            alert('✅ Yönetici girişi başarılı!\nArtık doğrudan web üzerinden yeni web/domain engeli ekleyebilir veya silebilirsiniz.');
+        } else {
+            document.getElementById('pinModalError').style.display = 'block';
+            document.getElementById('inputPinCode').select();
+        }
+    }
+
+    function logoutAdmin() {
+        decryptedToken = null;
+        sessionStorage.removeItem('samet_av_token');
+        setAdminUI(false);
+        renderTable(webDbData.rules);
+        alert('🚪 Yönetici oturumu kapatıldı.');
+    }
+
+    function setAdminUI(isAdmin) {
+        document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('adminBanner').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('thAction').style.display = isAdmin ? 'table-cell' : 'none';
+
+        const btn = document.getElementById('btnAdminAuth');
+        const icon = document.getElementById('adminBtnIcon');
+        const text = document.getElementById('adminBtnText');
+
+        if (isAdmin) {
+            btn.className = 'xp-admin-btn active';
+            icon.textContent = '🔓';
+            text.textContent = 'Yönetici Aktif | Çıkış';
+        } else {
+            btn.className = 'xp-admin-btn';
+            icon.textContent = '🔐';
+            text.textContent = 'Yönetici Girişi (PIN)';
+        }
+    }
+
+    // ================= GITHUB PAGES DIRECT SYNC MOTORU (GIT DATA API) =================
+
+    function stringToBase64(str) {
+        const bytes = new TextEncoder().encode(str);
+        let binary = '';
+        const chunkSize = 32768;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+    }
+
+    async function syncWebDatabaseToGitHub(commitMessage) {
+        if (!decryptedToken) throw new Error('Yönetici oturumu açık değil!');
+
+        const repo = 'Samettr08/Samettr08.github.io';
+        const branch = 'main';
+        const filePath = 'webdatabase.json';
+
+        // 1. JSON İçeriğini Hazırla
+        webDbData.total_domains = Object.keys(webDbData.rules || {}).length;
+        webDbData.updated_at = new Date().toISOString();
+        const jsonString = JSON.stringify(webDbData, null, 2);
+
+        // 2. Blob Oluştur (100MB'a kadar güvenli)
+        const base64Content = stringToBase64(jsonString);
+        const blobResp = await fetch(`https://api.github.com/repos/${repo}/git/blobs`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: base64Content, encoding: 'base64' })
+        });
+        if (!blobResp.ok) throw new Error('Blob oluşturulamadı: ' + (await blobResp.text()));
+        const blobData = await blobResp.json();
+        const blobSha = blobData.sha;
+
+        // 3. Branch'in Mevcut Commit SHA'sını Al
+        const refResp = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (!refResp.ok) throw new Error('Branch referansı alınamadı');
+        const refData = await refResp.json();
+        const currentCommitSha = refData.object.sha;
+
+        // 4. Commit'in Tree SHA'sını Al
+        const commitResp = await fetch(`https://api.github.com/repos/${repo}/git/commits/${currentCommitSha}`, {
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (!commitResp.ok) throw new Error('Commit bilgisi alınamadı');
+        const commitData = await commitResp.json();
+        const baseTreeSha = commitData.tree.sha;
+
+        // 5. Yeni Tree Oluştur
+        const treeResp = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                base_tree: baseTreeSha,
+                tree: [{
+                    path: filePath,
+                    mode: '100644',
+                    type: 'blob',
+                    sha: blobSha
+                }]
+            })
+        });
+        if (!treeResp.ok) throw new Error('Tree oluşturulamadı: ' + (await treeResp.text()));
+        const treeData = await treeResp.json();
+        const newTreeSha = treeData.sha;
+
+        // 6. Yeni Commit Oluştur
+        const newCommitResp = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: commitMessage,
+                tree: newTreeSha,
+                parents: [currentCommitSha]
+            })
+        });
+        if (!newCommitResp.ok) throw new Error('Commit oluşturulamadı: ' + (await newCommitResp.text()));
+        const newCommitData = await newCommitResp.json();
+        const newCommitSha = newCommitData.sha;
+
+        // 7. Branch Referansını Güncelle (PATCH)
+        const updateRefResp = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sha: newCommitSha,
+                force: false
+            })
+        });
+        if (!updateRefResp.ok) throw new Error('Branch referansı güncellenemedi: ' + (await updateRefResp.text()));
+
+        return newCommitSha;
+    }
+
+    // ================= ADMIN YÖNETİM AKSİYONLARI =================
+
+    async function adminAddWebRule() {
+        const urlInput = document.getElementById('adminInputUrl');
+        const catSelect = document.getElementById('adminSelectCategory');
+        const alertBox = document.getElementById('adminStatusAlert');
+
+        const rawUrl = urlInput.value.trim();
+        const category = catSelect.value;
+
+        if (!rawUrl) {
+            alert('Lütfen engellenecek bir URL veya Domain giriniz!');
+            return;
+        }
+
+        const domain = extractHost(rawUrl);
+        if (!domain || !domain.includes('.')) {
+            alert('Geçersiz domain formatı! Örn: malware.com veya badsite.org');
+            return;
+        }
+
+        const protectedDomains = ['github.io', 'github.com', 'samettr08.github.io', 'google.com', 'microsoft.com', 'windowsupdate.com'];
+        if (protectedDomains.includes(domain)) {
+            alert(`"${domain}" altyapı alan adıdır, engellenemez!`);
+            return;
+        }
+
+        webDbData.rules = webDbData.rules || {};
+        webDbData.rules[domain] = {
+            category: category,
+            wildcard: true,
+            block_all_subpages: true,
+            added_at: new Date().toISOString().split('T')[0]
+        };
+
+        // Arayüzü güncelle
+        document.getElementById('statTotalDomains').textContent = Object.keys(webDbData.rules).length.toLocaleString('tr-TR');
+        renderTable(webDbData.rules);
+        urlInput.value = '';
+
+        showAlert(alertBox, `⏳ "${domain}" ve tüm alt sayfaları GitHub Pages bulut veritabanına kaydediliyor...`, true);
+
+        try {
+            const commitSha = await syncWebDatabaseToGitHub(`Web Admin: Block domain ${domain} (${category})`);
+            showAlert(alertBox, `✅ BAŞARILI: Web engeli oluşturuldu ve GitHub Pages'e yüklendi!\nEngellenen Kural: ${domain} (Kök domain, *.${domain} ve tüm alt sayfalar)\nCommit: ${commitSha.substring(0, 10)}\nAntivirüs web kalkanları güncellemeyi doğrudan alacaktır.`, true);
+        } catch (e) {
+            showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
+        }
+    }
+
+    async function adminDeleteDomain(domain) {
+        if (!confirm(`"${domain}" web engelini veritabanından silmek istediğinize emin misiniz?`)) return;
+
+        delete webDbData.rules[domain];
+        document.getElementById('statTotalDomains').textContent = Object.keys(webDbData.rules).length.toLocaleString('tr-TR');
+        renderTable(webDbData.rules);
+
+        const alertBox = document.getElementById('adminStatusAlert');
+        showAlert(alertBox, `⏳ Web engeli siliniyor ve GitHub Pages güncelleniyor...`, true);
+
+        try {
+            const commitSha = await syncWebDatabaseToGitHub(`Web Admin: Remove domain block ${domain}`);
+            showAlert(alertBox, `✅ Web engeli başarıyla kaldırıldı ve GitHub Pages güncellendi! (Commit: ${commitSha.substring(0, 10)})`, true);
+        } catch (e) {
+            showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
+        }
+    }
+
+    async function adminHandleImportTxt(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const alertBox = document.getElementById('adminStatusAlert');
+        showAlert(alertBox, `"${file.name}" okunuyor...`, true);
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const text = e.target.result;
+            const lines = text.split(/\r?\n/);
+            let added = 0;
+
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.startsWith('#') || line.startsWith('//')) continue;
+
+                let d = '', cat = 'Malware Distribution';
+                if (line.includes(',')) {
+                    const parts = line.split(',');
+                    d = parts[0].trim();
+                    if (parts[1]) cat = parts[1].trim();
+                } else {
+                    d = line;
+                }
+
+                d = extractHost(d);
+                if (d && d.includes('.')) {
+                    webDbData.rules[d] = {
+                        category: cat,
+                        wildcard: true,
+                        block_all_subpages: true,
+                        added_at: new Date().toISOString().split('T')[0]
+                    };
+                    added++;
+                }
+            }
+
+            document.getElementById('statTotalDomains').textContent = Object.keys(webDbData.rules).length.toLocaleString('tr-TR');
+            renderTable(webDbData.rules);
+
+            showAlert(alertBox, `⏳ ${added.toLocaleString('tr-TR')} adet yeni domain işlendi, GitHub Pages'e yükleniyor...`, true);
+
+            try {
+                const commitSha = await syncWebDatabaseToGitHub(`Web Admin: Bulk import ${added} domains from ${file.name}`);
+                showAlert(alertBox, `✅ ${added.toLocaleString('tr-TR')} adet zararlı domain başarıyla GitHub Pages'e yüklendi!\nCommit: ${commitSha.substring(0, 10)}`, true);
+            } catch (err) {
+                showAlert(alertBox, `❌ GitHub Sync Hatası: ${err.message}`, false);
+            }
+        };
+        reader.readAsText(file);
     }
 
     window.addEventListener('DOMContentLoaded', loadWebDatabase);

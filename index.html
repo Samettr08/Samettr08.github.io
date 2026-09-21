@@ -138,6 +138,13 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .xp-nav-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
         .xp-nav-link {
@@ -164,6 +171,32 @@
             color: #ffffff;
             border-color: #002266;
             text-shadow: 1px 1px 1px #001f5c;
+        }
+
+        .xp-admin-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #ffdf9e 10%, #ffc04d 50%, #ffa500 100%);
+            border: 1px solid #b36b00;
+            border-radius: 3px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #4a2800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .xp-admin-btn:hover {
+            background: linear-gradient(180deg, #ffffff 0%, #ffe9b8 10%, #ffd06b 50%, #ffb733 100%);
+            border-color: #e68a00;
+        }
+
+        .xp-admin-btn.active {
+            background: linear-gradient(180deg, #e6ffe6 0%, #99ff99 50%, #33cc33 100%);
+            border-color: #006600;
+            color: #003300;
         }
 
         .xp-body {
@@ -227,7 +260,7 @@
         label.xp-label {
             font-size: 12px;
             font-weight: bold;
-            min-width: 140px;
+            min-width: 130px;
             color: #222;
         }
 
@@ -241,7 +274,7 @@
             font-family: 'Consolas', 'Courier New', monospace;
             outline: none;
             flex: 1;
-            min-width: 280px;
+            min-width: 250px;
         }
 
         .xp-input:focus {
@@ -266,70 +299,80 @@
             color: #000;
             cursor: pointer;
             outline: none;
-            box-shadow: inset 0 1px 0 #ffffff, 0 1px 1px rgba(0,0,0,0.15);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.2);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            user-select: none;
         }
 
         .xp-btn:hover {
             border-color: #f7a01d;
-            box-shadow: 0 0 3px #f7a01d;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 0 3px #f7a01d;
         }
 
         .xp-btn:active {
-            background: #ddd9cd;
-            border-color: #003c74;
-            padding: 6px 15px 4px 17px;
+            background: linear-gradient(180deg, #cecac0 0%, #e0ded3 50%, #ffffff 100%);
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .xp-btn-blue {
-            background: linear-gradient(180deg, #60a8f8 0%, #2e7be6 50%, #135fc7 100%);
-            border-color: #003399;
-            color: #fff;
+            background: linear-gradient(180deg, #4292ff 0%, #1765dd 50%, #0d54c7 100%);
+            color: #ffffff;
+            border-color: #002266;
             text-shadow: 1px 1px 1px #001f5c;
         }
 
-        /* Security Banner */
-        .xp-security-banner {
-            background: #fff8e1;
-            border: 1px solid #ffe082;
-            border-radius: 4px;
-            padding: 8px 12px;
-            font-size: 11px;
-            color: #795548;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+        .xp-btn-blue:hover {
+            background: linear-gradient(180deg, #5da2ff 0%, #2975eb 50%, #1260db 100%);
         }
 
-        /* Stats Bar */
+        .xp-btn-red {
+            background: linear-gradient(180deg, #ff7a66 0%, #d83a21 50%, #ba2008 100%);
+            color: #ffffff;
+            border-color: #660000;
+            text-shadow: 1px 1px 1px #330000;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
+        .xp-btn-red:hover {
+            background: linear-gradient(180deg, #ff9482 0%, #e84b33 50%, #cf2d13 100%);
+        }
+
+        .xp-btn-green {
+            background: linear-gradient(180deg, #66cc66 0%, #228822 50%, #116611 100%);
+            color: #ffffff;
+            border-color: #003300;
+            text-shadow: 1px 1px 1px #002200;
+        }
+
+        /* Stats Grid */
         .xp-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 8px;
-            margin-bottom: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .xp-stat-box {
             background: #ffffff;
             border: 1px solid var(--xp-border-soft);
             border-radius: 3px;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: inset 0 1px 2px #f0f0f0;
         }
 
         .xp-stat-lbl {
             font-size: 11px;
             color: #666;
-            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
         }
 
         .xp-stat-val {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #003399;
             font-family: 'Consolas', monospace;
@@ -337,18 +380,18 @@
 
         /* Alerts */
         .xp-alert {
+            display: none;
             padding: 10px 14px;
             border-radius: 3px;
-            font-size: 13px;
-            margin-top: 8px;
-            display: none;
-            font-weight: bold;
+            margin-top: 10px;
+            font-size: 12px;
             line-height: 1.5;
+            white-space: pre-line;
         }
 
         .xp-alert-success {
             background: #e8f5e9;
-            border: 1px solid #4caf50;
+            border: 2px solid #4caf50;
             color: #1b5e20;
         }
 
@@ -358,9 +401,15 @@
             color: #b71c1c;
         }
 
+        .xp-alert-info {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            color: #0d47a1;
+        }
+
         /* Table */
         .xp-table-container {
-            max-height: 320px;
+            max-height: 360px;
             overflow-y: auto;
             background: #ffffff;
             border: 1px solid var(--xp-border-soft);
@@ -384,6 +433,7 @@
             font-weight: bold;
             font-size: 11px;
             color: #333;
+            z-index: 2;
         }
 
         table.xp-table td {
@@ -421,6 +471,75 @@
             overflow-x: auto;
             line-height: 1.4;
         }
+
+        /* Modal Dialog (Windows XP Style) */
+        .xp-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .xp-modal {
+            background: var(--xp-bg);
+            border: 3px solid var(--xp-blue);
+            border-top: none;
+            border-radius: 6px 6px 0 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 420px;
+            overflow: hidden;
+            animation: popIn 0.15s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .xp-modal-titlebar {
+            background: linear-gradient(180deg, #0058ee 0%, #3593ff 6%, #0054e3 100%);
+            padding: 4px 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .xp-modal-body {
+            padding: 16px;
+        }
+
+        .xp-modal-footer {
+            background: #e0ded3;
+            border-top: 1px solid #919b9c;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .admin-banner {
+            display: none;
+            background: linear-gradient(180deg, #fff3cd 0%, #ffeeba 100%);
+            border: 1px solid #ffeeba;
+            border-left: 5px solid #ff9900;
+            padding: 8px 12px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            color: #856404;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -445,22 +564,54 @@
             <span class="xp-menu-item"><b>Dosya</b></span>
             <span class="xp-menu-item">Görünüm</span>
             <span class="xp-menu-item" onclick="location.reload()">Yenile (F5)</span>
-            <span class="xp-menu-item" onclick="alert('Samet-AV Signature Hub v2.0\nBu web sitesi genel sorgulama ve istemciler için salt-okunurdur.\nVeritabanı yönetimi yalnızca yetkili HashManager.exe üzerinden yapılır.')">Hakkında</span>
+            <span class="xp-menu-item" onclick="openAdminModal()">Yönetici Girişi</span>
+            <span class="xp-menu-item" onclick="alert('Samet-AV Signature Hub v3.0\nWeb üzerinden doğrudan bulut veritabanı yönetimi (PIN Korumalı).\nİstemciler ve kullanıcılar için canlı tehdit koruması.')">Hakkında</span>
         </div>
 
         <!-- Navigation Bar (Switch between Hashes and Web DB) -->
         <div class="xp-nav-bar">
-            <a href="index.html" class="xp-nav-link active">🛡️ Dosya Hash Veritabanı (database.json)</a>
-            <a href="webdatabase.html" class="xp-nav-link">🌐 Zararlı Web &amp; Domain Veritabanı (webdatabase.json)</a>
+            <div class="xp-nav-left">
+                <a href="index.html" class="xp-nav-link active">🛡️ Dosya Hash Veritabanı (database.json)</a>
+                <a href="webdatabase.html" class="xp-nav-link">🌐 Zararlı Web &amp; Domain Veritabanı (webdatabase.json)</a>
+            </div>
+            <button id="btnAdminAuth" class="xp-admin-btn" onclick="handleAdminButtonClick()">
+                <span id="adminBtnIcon">🔐</span> <span id="adminBtnText">Yönetici Girişi (PIN)</span>
+            </button>
         </div>
 
         <div class="xp-body">
-            <!-- Güvenlik Bilgilendirmesi -->
-            <div class="xp-security-banner">
-                <span style="font-size: 16px;">🔒</span>
+            <!-- Yönetici Aktif Bannerı -->
+            <div id="adminBanner" class="admin-banner" style="display: none;">
                 <div>
-                    <b>Güvenli Salt-Okunur Veritabanı:</b> Web arayüzü yalnızca arama ve tarama amaçlıdır. Veritabanına yeni hash ekleme/çıkarma yetkisi yalnızca özel <b>HashManager.exe</b> yönetim aracına aittir.
+                    <b>👑 Yönetici Modu Aktif:</b> Doğrudan bu web sayfası üzerinden veritabanına hash ekleyebilir, silebilir ve tek tıkla GitHub Pages bulutuna kaydedebilirsiniz!
                 </div>
+                <button class="xp-btn xp-btn-red" style="font-size:11px;" onclick="logoutAdmin()">🚪 Çıkış Yap</button>
+            </div>
+
+            <!-- Yönetici Kontrol İstasyonu (Sadece PIN girildiğinde açılır) -->
+            <div id="adminPanel" style="display: none;">
+                <fieldset class="xp-groupbox" style="border: 2px solid #0055ea; background: rgba(235, 243, 255, 0.7);">
+                    <legend class="xp-legend" style="color: #0055ea;">⚡ Yönetici İstasyonu: Yeni Hash Ekle &amp; GitHub Pages'e Kaydet</legend>
+                    
+                    <div class="form-row">
+                        <label class="xp-label" for="adminInputHash">Eklenecek Hash:</label>
+                        <input type="text" id="adminInputHash" class="xp-input" placeholder="SHA-256 (64 karakter) veya MD5 hash değeri girin...">
+                    </div>
+
+                    <div class="form-row">
+                        <label class="xp-label" for="adminInputName">Tehdit Tanımı:</label>
+                        <input type="text" id="adminInputName" class="xp-input" value="Trojan.Win32.PufaAv.Generic" placeholder="Örn: Ransomware.LockBit, Trojan.Downloader...">
+                        <button class="xp-btn xp-btn-green" onclick="adminAddHash()">
+                            <span>➕</span> İmzayı Ekle &amp; Buluta Kaydet
+                        </button>
+                        <button class="xp-btn" onclick="document.getElementById('adminImportTxt').click()">
+                            <span>📂</span> Toplu TXT İçe Aktar
+                        </button>
+                        <input type="file" id="adminImportTxt" accept=".txt" style="display:none;" onchange="adminHandleImportTxt(event)">
+                    </div>
+
+                    <div id="adminStatusAlert" class="xp-alert"></div>
+                </fieldset>
             </div>
 
             <!-- XP Sekmeler -->
@@ -495,7 +646,7 @@
                 <fieldset class="xp-groupbox">
                     <legend class="xp-legend">🔍 SHA-256 Tehdit Analiz İstasyonu (O(1) Memory Lookup)</legend>
                     <p style="font-size: 11px; color: #555; margin-bottom: 10px;">
-                        Bilgisayarınızdaki bir dosyanın veya şüpheli bir SHA-256 hash'inin 27.600+ zararlı imzası arasında bulunup bulunmadığını anında test edin:
+                        Bilgisayarınızdaki bir dosyanın veya şüpheli bir SHA-256 hash'inin zararlı imzaları arasında bulunup bulunmadığını anında test edin:
                     </p>
 
                     <div class="form-row">
@@ -516,7 +667,7 @@
                 <fieldset class="xp-groupbox">
                     <legend class="xp-legend">🛡️ Yönetici ve Antivirüs Araçları</legend>
                     <p style="font-size: 12px; line-height: 1.5; color: #333;">
-                        • <b>Veritabanı Güncelleme:</b> Yeni zararlı hash'leri eklemek, TXT dosyalarını içe aktarmak ve GitHub'a otomatik push etmek için yerel <b>HashManager.exe</b> aracını kullanın.<br>
+                        • <b>Web Üzerinden Yönetim:</b> Yeni zararlı hash eklemek veya silmek için sağ üstteki <b>[ 🔐 Yönetici Girişi ]</b> butonuna tıklayıp PIN kodunuzu girin.<br>
                         • <b>Ham Veritabanı İndir:</b> <a href="database.json" download="database.json" style="color: #0055ea; font-weight: bold;">database.json (Tüm Tehditler)</a>
                     </p>
                 </fieldset>
@@ -536,7 +687,7 @@
                                 <th style="width: 50px;">#</th>
                                 <th>SHA-256 Hash</th>
                                 <th style="width: 280px;">Tehdit Tanımı (Malware)</th>
-                                <th style="width: 80px;">İşlem</th>
+                                <th id="thAction" style="width: 80px; display: none;">İşlem</th>
                             </tr>
                         </thead>
                         <tbody id="signaturesTableBody">
@@ -569,13 +720,83 @@ using (var wc = new System.Net.WebClient()) {
         <!-- Windows XP Status Bar -->
         <div class="xp-statusbar">
             <span id="lblStatus">Hazır. Windows XP Luna Engine aktif.</span>
-            <span>Konum: <b>samettr08.github.io</b> (Salt-Okunur)</span>
+            <span>Konum: <b>samettr08.github.io</b></span>
+        </div>
+    </div>
+</div>
+
+<!-- ================= WINDOWS XP PIN MODAL ================= -->
+<div id="pinModal" class="xp-modal-overlay">
+    <div class="xp-modal">
+        <div class="xp-modal-titlebar">
+            <span>🔐 Yönetici Doğrulaması (PIN Girişi)</span>
+            <div class="xp-btn-ctrl xp-close" onclick="closeAdminModal()">✕</div>
+        </div>
+        <div class="xp-modal-body">
+            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 14px;">
+                <div style="font-size: 32px;">🛡️</div>
+                <div style="font-size: 12px; line-height: 1.4;">
+                    <b>Bu işlem yetkili erişim gerektirir.</b><br>
+                    Veritabanı üzerinde ekleme veya silme yapabilmek için lütfen 4 haneli PIN kodunuzu giriniz:
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                <input type="password" id="inputPinCode" class="xp-input" maxlength="6" 
+                       style="font-size: 20px; text-align: center; letter-spacing: 8px; width: 150px; font-weight: bold;" 
+                       placeholder="••••" onkeydown="if(event.key==='Enter') submitPinCode()">
+            </div>
+
+            <div id="pinModalError" style="display: none; color: #cc0000; font-size: 11px; text-align: center; font-weight: bold;">
+                ❌ Hatalı PIN kodu! Lütfen tekrar deneyiniz.
+            </div>
+        </div>
+        <div class="xp-modal-footer">
+            <button class="xp-btn xp-btn-blue" onclick="submitPinCode()">Tamam</button>
+            <button class="xp-btn" onclick="closeAdminModal()">İptal</button>
         </div>
     </div>
 </div>
 
 <script>
+    // Güvenli şifreli anahtar kasası (AES-GCM & PBKDF2 ile korunur, kaynak kodunda plaintext anahtar bulunmaz)
+    const CRYPTO_CONFIG = {
+        saltB64: 'uWNZJ60ijVEe7qg95n9rfA==',
+        ivB64: 'oU6Rn0Dbih4qjd+D',
+        cipherB64: 'DIpm+4KNM+8EDNVvrBy2LUgBHo90uVmeB10HZzEgszPuki2RoAOv8F3iTcfwazVf7HZP9cXBDXI='
+    };
+
     let dbData = { signatures: {} };
+    let decryptedToken = null;
+
+    // WebCrypto AES-GCM Decryption (PIN doğrulaması)
+    async function unlockWithPin(pin) {
+        try {
+            const salt = Uint8Array.from(atob(CRYPTO_CONFIG.saltB64), c => c.charCodeAt(0));
+            const iv = Uint8Array.from(atob(CRYPTO_CONFIG.ivB64), c => c.charCodeAt(0));
+            const cipher = Uint8Array.from(atob(CRYPTO_CONFIG.cipherB64), c => c.charCodeAt(0));
+
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                cipher
+            );
+
+            return new TextDecoder().decode(decrypted);
+        } catch (e) {
+            return null; // Yanlış PIN veya geçersiz veri
+        }
+    }
 
     async function loadDatabase() {
         const lbl = document.getElementById('lblStatus');
@@ -596,6 +817,13 @@ using (var wc = new System.Net.WebClient()) {
         } catch (e) {
             console.error(e);
             lbl.textContent = 'Uyarı: database.json henüz okunamadı.';
+        }
+
+        // Mevcut oturum kontrolü
+        const savedToken = sessionStorage.getItem('samet_av_token');
+        if (savedToken) {
+            decryptedToken = savedToken;
+            setAdminUI(true);
         }
     }
 
@@ -658,23 +886,22 @@ using (var wc = new System.Net.WebClient()) {
 
         const limit = 400;
         const slice = entries.slice(0, limit);
+        const isAdmin = !!decryptedToken;
 
         for (const [hash, name] of slice) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index++}</td>
-                <td title="${hash}">${hash}</td>
-                <td style="color: #b71c1c; font-weight: bold;">⚠️ ${escapeHtml(name)}</td>
-                <td>
-                    <button class="xp-btn" style="padding: 1px 6px; font-size: 10px;" onclick="copyText('${hash}')">Kopyala</button>
-                </td>
+                <td style="color: #b71c1c; font-weight: bold;">${hash}</td>
+                <td>${escapeHtml(name)}</td>
+                ${isAdmin ? `<td><button class="xp-btn xp-btn-red" onclick="adminDeleteHash('${hash}')">✕ Sil</button></td>` : ''}
             `;
             tbody.appendChild(tr);
         }
 
         if (entries.length > limit) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha imza veritabanında kayıtlı.</td>`;
+            tr.innerHTML = `<td colspan="${isAdmin ? 4 : 3}" style="text-align:center; background:#f0ede0; font-style:italic; padding:8px;">... ve ${entries.length - limit} adet daha imza veritabanında kayıtlı.</td>`;
             tbody.appendChild(tr);
         }
     }
@@ -690,14 +917,313 @@ using (var wc = new System.Net.WebClient()) {
         renderTable(filtered);
     }
 
-    function copyText(t) {
-        navigator.clipboard.writeText(t).then(() => {
-            document.getElementById('lblStatus').textContent = 'Panoya kopyalandı: ' + t;
-        });
-    }
-
     function escapeHtml(s) {
         return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+    }
+
+    // ================= YÖNETİCİ & PIN MODAL İŞLEMLERİ =================
+
+    function handleAdminButtonClick() {
+        if (decryptedToken) {
+            logoutAdmin();
+        } else {
+            openAdminModal();
+        }
+    }
+
+    function openAdminModal() {
+        document.getElementById('inputPinCode').value = '';
+        document.getElementById('pinModalError').style.display = 'none';
+        document.getElementById('pinModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('inputPinCode').focus(), 50);
+    }
+
+    function closeAdminModal() {
+        document.getElementById('pinModal').style.display = 'none';
+    }
+
+    async function submitPinCode() {
+        const pin = document.getElementById('inputPinCode').value.trim();
+        if (!pin) return;
+
+        const token = await unlockWithPin(pin);
+        if (token) {
+            decryptedToken = token;
+            sessionStorage.setItem('samet_av_token', token);
+            closeAdminModal();
+            setAdminUI(true);
+            renderTable(dbData.signatures);
+            alert('✅ Yönetici girişi başarılı!\nArtık doğrudan web üzerinden yeni hash ekleyebilir veya silebilirsiniz.');
+        } else {
+            document.getElementById('pinModalError').style.display = 'block';
+            document.getElementById('inputPinCode').select();
+        }
+    }
+
+    function logoutAdmin() {
+        decryptedToken = null;
+        sessionStorage.removeItem('samet_av_token');
+        setAdminUI(false);
+        renderTable(dbData.signatures);
+        alert('🚪 Yönetici oturumu kapatıldı.');
+    }
+
+    function setAdminUI(isAdmin) {
+        document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('adminBanner').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('thAction').style.display = isAdmin ? 'table-cell' : 'none';
+
+        const btn = document.getElementById('btnAdminAuth');
+        const icon = document.getElementById('adminBtnIcon');
+        const text = document.getElementById('adminBtnText');
+
+        if (isAdmin) {
+            btn.className = 'xp-admin-btn active';
+            icon.textContent = '🔓';
+            text.textContent = 'Yönetici Aktif | Çıkış';
+        } else {
+            btn.className = 'xp-admin-btn';
+            icon.textContent = '🔐';
+            text.textContent = 'Yönetici Girişi (PIN)';
+        }
+    }
+
+    // ================= GITHUB PAGES DIRECT SYNC MOTORU (GIT DATA API) =================
+
+    function stringToBase64(str) {
+        const bytes = new TextEncoder().encode(str);
+        let binary = '';
+        const chunkSize = 32768;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+    }
+
+    async function syncDatabaseToGitHub(commitMessage) {
+        if (!decryptedToken) throw new Error('Yönetici oturumu açık değil!');
+
+        const repo = 'Samettr08/Samettr08.github.io';
+        const branch = 'main';
+        const filePath = 'database.json';
+
+        // 1. JSON İçeriğini Hazırla
+        dbData.total_signatures = Object.keys(dbData.signatures || {}).length;
+        dbData.updated_at = new Date().toISOString();
+        const jsonString = JSON.stringify(dbData, null, 2);
+
+        // 2. Blob Oluştur (100MB'a kadar güvenli)
+        const base64Content = stringToBase64(jsonString);
+        const blobResp = await fetch(`https://api.github.com/repos/${repo}/git/blobs`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: base64Content, encoding: 'base64' })
+        });
+        if (!blobResp.ok) throw new Error('Blob oluşturulamadı: ' + (await blobResp.text()));
+        const blobData = await blobResp.json();
+        const blobSha = blobData.sha;
+
+        // 3. Branch'in Mevcut Commit SHA'sını Al
+        const refResp = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (!refResp.ok) throw new Error('Branch referansı alınamadı');
+        const refData = await refResp.json();
+        const currentCommitSha = refData.object.sha;
+
+        // 4. Commit'in Tree SHA'sını Al
+        const commitResp = await fetch(`https://api.github.com/repos/${repo}/git/commits/${currentCommitSha}`, {
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (!commitResp.ok) throw new Error('Commit bilgisi alınamadı');
+        const commitData = await commitResp.json();
+        const baseTreeSha = commitData.tree.sha;
+
+        // 5. Yeni Tree Oluştur
+        const treeResp = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                base_tree: baseTreeSha,
+                tree: [{
+                    path: filePath,
+                    mode: '100644',
+                    type: 'blob',
+                    sha: blobSha
+                }]
+            })
+        });
+        if (!treeResp.ok) throw new Error('Tree oluşturulamadı: ' + (await treeResp.text()));
+        const treeData = await treeResp.json();
+        const newTreeSha = treeData.sha;
+
+        // 6. Yeni Commit Oluştur
+        const newCommitResp = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: commitMessage,
+                tree: newTreeSha,
+                parents: [currentCommitSha]
+            })
+        });
+        if (!newCommitResp.ok) throw new Error('Commit oluşturulamadı: ' + (await newCommitResp.text()));
+        const newCommitData = await newCommitResp.json();
+        const newCommitSha = newCommitData.sha;
+
+        // 7. Branch Referansını Güncelle (PATCH)
+        const updateRefResp = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': 'token ' + decryptedToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sha: newCommitSha,
+                force: false
+            })
+        });
+        if (!updateRefResp.ok) throw new Error('Branch referansı güncellenemedi: ' + (await updateRefResp.text()));
+
+        return newCommitSha;
+    }
+
+    // ================= ADMIN YÖNETİM AKSİYONLARI =================
+
+    async function adminAddHash() {
+        const hashInput = document.getElementById('adminInputHash');
+        const nameInput = document.getElementById('adminInputName');
+        const alertBox = document.getElementById('adminStatusAlert');
+
+        let rawHash = hashInput.value.trim().toLowerCase();
+        let name = nameInput.value.trim();
+
+        if (!rawHash) {
+            alert('Lütfen eklenecek geçerli bir SHA-256 veya MD5 hash değeri giriniz!');
+            return;
+        }
+
+        // Temizle
+        rawHash = rawHash.replace(/[^a-f0-9]/gi, '');
+        if (rawHash.length !== 64 && rawHash.length !== 32) {
+            alert('Geçersiz hash uzunluğu! SHA-256 için 64 karakter, MD5 için 32 karakter olmalıdır.');
+            return;
+        }
+
+        const badHashes = [
+            'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+            'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+            'd41d8cd98f00b204e9800998ecf8427e'
+        ];
+        if (badHashes.includes(rawHash)) {
+            alert('Bu hash boş dosya özetidir (SHA-256/MD5 ""), zararlı olarak eklenemez!');
+            return;
+        }
+
+        if (!name) name = 'Trojan.Win32.PufaAv.Generic';
+
+        dbData.signatures = dbData.signatures || {};
+        dbData.signatures[rawHash] = name;
+
+        // Arayüzü güncelle
+        document.getElementById('statTotalCount').textContent = Object.keys(dbData.signatures).length.toLocaleString('tr-TR');
+        renderTable(dbData.signatures);
+        hashInput.value = '';
+
+        showAlert(alertBox, `⏳ "${rawHash.substring(0, 16)}..." imzası GitHub Pages bulut veritabanına kaydediliyor...`, true);
+
+        try {
+            const commitSha = await syncDatabaseToGitHub(`Web Admin: Add hash ${rawHash.substring(0, 16)} (${name})`);
+            showAlert(alertBox, `✅ BAŞARILI: İmza veritabanına eklendi ve GitHub Pages'e yüklendi!\nCommit: ${commitSha.substring(0, 10)}\nDiğer cihazlardaki antivirüsler güncellemeyi doğrudan alacaktır.`, true);
+        } catch (e) {
+            showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
+        }
+    }
+
+    async function adminDeleteHash(hash) {
+        if (!confirm(`"${hash.substring(0, 16)}..." imzasını veritabanından silmek istediğinize emin misiniz?`)) return;
+
+        delete dbData.signatures[hash];
+        document.getElementById('statTotalCount').textContent = Object.keys(dbData.signatures).length.toLocaleString('tr-TR');
+        renderTable(dbData.signatures);
+
+        const alertBox = document.getElementById('adminStatusAlert');
+        showAlert(alertBox, `⏳ İmza siliniyor ve GitHub Pages güncelleniyor...`, true);
+
+        try {
+            const commitSha = await syncDatabaseToGitHub(`Web Admin: Delete hash ${hash.substring(0, 16)}`);
+            showAlert(alertBox, `✅ İmza başarıyla silindi ve GitHub Pages güncellendi! (Commit: ${commitSha.substring(0, 10)})`, true);
+        } catch (e) {
+            showAlert(alertBox, `❌ GitHub Sync Hatası: ${e.message}`, false);
+        }
+    }
+
+    async function adminHandleImportTxt(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const alertBox = document.getElementById('adminStatusAlert');
+        showAlert(alertBox, `"${file.name}" okunuyor...`, true);
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const text = e.target.result;
+            const lines = text.split(/\r?\n/);
+            let added = 0;
+
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.startsWith('#') || line.startsWith('//')) continue;
+
+                let h = '', n = 'Generic.Malware';
+                if (line.includes(',')) {
+                    const parts = line.split(',');
+                    h = parts[0].trim().toLowerCase();
+                    if (parts[1]) n = parts[1].trim();
+                } else {
+                    h = line.toLowerCase();
+                }
+
+                h = h.replace(/[^a-f0-9]/gi, '');
+                if (h.length === 64 || h.length === 32) {
+                    dbData.signatures[h] = n;
+                    added++;
+                }
+            }
+
+            document.getElementById('statTotalCount').textContent = Object.keys(dbData.signatures).length.toLocaleString('tr-TR');
+            renderTable(dbData.signatures);
+
+            showAlert(alertBox, `⏳ ${added.toLocaleString('tr-TR')} adet yeni imza işlendi, GitHub Pages'e yükleniyor...`, true);
+
+            try {
+                const commitSha = await syncDatabaseToGitHub(`Web Admin: Bulk import ${added} hashes from ${file.name}`);
+                showAlert(alertBox, `✅ ${added.toLocaleString('tr-TR')} adet imza başarıyla GitHub Pages'e yüklendi!\nCommit: ${commitSha.substring(0, 10)}`, true);
+            } catch (err) {
+                showAlert(alertBox, `❌ GitHub Sync Hatası: ${err.message}`, false);
+            }
+        };
+        reader.readAsText(file);
     }
 
     window.addEventListener('DOMContentLoaded', loadDatabase);

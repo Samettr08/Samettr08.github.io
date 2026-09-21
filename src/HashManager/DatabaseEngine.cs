@@ -77,6 +77,10 @@ namespace AntivirusHashManager
             hash = CleanHash(hash);
             if (string.IsNullOrEmpty(hash)) return false;
 
+            // Geçersiz uzunluk ya da "bilinen-temiz/dejenere" hash (boş dosya vb.) veritabanına
+            // ASLA girmez - istemci bunu her boş dosyada "zararlı" sanıp toplu karantina yapardı.
+            if (!IsAcceptableHash(hash)) return false;
+
             if (string.IsNullOrWhiteSpace(threatName))
                 threatName = "Generic.Malware";
 
@@ -225,7 +229,7 @@ namespace AntivirusHashManager
                     }
 
                     hash = CleanHash(hash);
-                    if (IsValidHashLength(hash))
+                    if (IsAcceptableHash(hash))
                     {
                         if (!newHashes.ContainsKey(hash))
                         {
@@ -319,7 +323,9 @@ namespace AntivirusHashManager
                                 string valPart = line.Substring(colonIdx + 1).Trim().TrimEnd(',').Trim().Trim('"', ' ');
 
                                 keyPart = CleanHash(keyPart);
-                                if (!string.IsNullOrEmpty(keyPart))
+                                // Bozuk/temiz hash'ler yüklenirken de temizlenir: mevcut database.json'daki
+                                // hatalı girdiler bir sonraki yayında buluttan da düşer.
+                                if (!string.IsNullOrEmpty(keyPart) && IsAcceptableHash(keyPart))
                                 {
                                     _signatures[keyPart] = valPart;
                                     _keys.Add(keyPart);
@@ -418,6 +424,30 @@ namespace AntivirusHashManager
             if (hash == null) return false;
             int len = hash.Length;
             return len == 32 || len == 40 || len == 64; // MD5, SHA1, SHA256
+        }
+
+        // Asla zararlı olamayacak/dejenere hash'ler: boş girdinin MD5/SHA1/SHA256 özeti ve
+        // hep-0 / hep-f dizileri. (Gerçek olay: SHA-256("") "Malware.PufaAv.Generic" olarak
+        // veritabanına girdi -> istemci her 0 baytlık dosyayı zararlı sanıp yüzlerce sistem
+        // dosyasını karantinaya aldı.) Değerleri gözle değil sha256sum ile doğrula.
+        private static readonly HashSet<string> RejectedHashes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", // SHA-256("")
+            "da39a3ee5e6b4b0d3255bfef95601890afd80709",                         // SHA-1("")
+            "d41d8cd98f00b204e9800998ecf8427e",                                 // MD5("")
+        };
+
+        public static bool IsAcceptableHash(string hash)
+        {
+            if (!IsValidHashLength(hash)) return false;
+            if (RejectedHashes.Contains(hash)) return false;
+            char first = hash[0];
+            bool allSame = true;
+            for (int i = 1; i < hash.Length; i++)
+            {
+                if (hash[i] != first) { allSame = false; break; }
+            }
+            return !allSame; // 000...0 / fff...f gibi dejenere diziler
         }
 
         private static string EscapeJson(string s)
