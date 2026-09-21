@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "database_name": "Samet-AV Malicious Web & Domain Database",
-  "updated_at": "2026-09-21T16:20:51.454Z",
-  "total_domains": 400,
+  "updated_at": "2026-09-21T16:41:12.170Z",
+  "total_domains": 401,
   "rules": {
     "0following.com": {
       "category": "Malware Distribution",
@@ -2400,6 +2400,12 @@
     },
     "lua.tools": {
       "category": "Malware Distribution",
+      "wildcard": true,
+      "block_all_subpages": true,
+      "added_at": "2026-09-21"
+    },
+    "kaspersky.com": {
+      "category": "Şüpheli Web Sitesi",
       "wildcard": true,
       "block_all_subpages": true,
       "added_at": "2026-09-21"
