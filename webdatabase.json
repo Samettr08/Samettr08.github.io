@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "database_name": "Samet-AV Malicious Web & Domain Database",
-  "updated_at": "2026-09-21T16:10:47.853Z",
-  "total_domains": 399,
+  "updated_at": "2026-09-21T16:20:51.454Z",
+  "total_domains": 400,
   "rules": {
     "0following.com": {
       "category": "Malware Distribution",
@@ -2393,6 +2393,12 @@
       "added_at": "2026-09-19"
     },
     "steamtools.net": {
+      "category": "Malware Distribution",
+      "wildcard": true,
+      "block_all_subpages": true,
+      "added_at": "2026-09-21"
+    },
+    "lua.tools": {
       "category": "Malware Distribution",
       "wildcard": true,
       "block_all_subpages": true,
