@@ -686,6 +686,22 @@
                         • <b>Wildcard Alt Alan Koruması:</b> Engellenen bir alan adı (örn: <code>malware.com</code>), tüm alt alan adlarını (örn: <code>login.malware.com</code>, <code>secure.malware.com</code>) da otomatik olarak engeller.<br>
                         • <b>Ham Web Veritabanı İndir:</b> <a href="webdatabase.json" download="webdatabase.json" style="color: #0055ea; font-weight: bold;">webdatabase.json (Tüm Engelli Domainler)</a>
                     </p>
+
+                    <!-- Göze Çarpan PIN Giriş Kutusu -->
+                    <div id="boxOpenAdminPrompt" style="margin-top: 10px; background: #fffbe6; border: 2px dashed #ffa500; border-radius: 6px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 28px;">🚫</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 13px; color: #b36b00;">Yeni Zararlı Web / Domain Engeli Eklemek mi İstiyorsunuz?</div>
+                                <div style="font-size: 11px; color: #666; margin-top: 2px;">
+                                    Yetkisiz kişilerin engelleme yapmasını önlemek için sistem PIN korumalıdır.
+                                </div>
+                            </div>
+                        </div>
+                        <button class="xp-btn xp-btn-blue" onclick="openAdminModal()" style="padding: 6px 16px; font-size: 12px; font-weight: bold;">
+                            🔐 PIN Gir &amp; Ekleme Panelini Aç
+                        </button>
+                    </div>
                 </fieldset>
             </div>
 
@@ -1014,6 +1030,8 @@ using (var wc = new System.Net.WebClient()) {
         document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
         document.getElementById('adminBanner').style.display = isAdmin ? 'flex' : 'none';
         document.getElementById('thAction').style.display = isAdmin ? 'table-cell' : 'none';
+        const promptBox = document.getElementById('boxOpenAdminPrompt');
+        if (promptBox) promptBox.style.display = isAdmin ? 'none' : 'flex';
 
         const btn = document.getElementById('btnAdminAuth');
         const icon = document.getElementById('adminBtnIcon');
