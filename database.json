@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "database_name": "Antivirus Signature Database",
-  "updated_at": "2026-09-23T18:48:52.863Z",
-  "total_signatures": 30621,
+  "updated_at": "2026-09-23T18:54:02.672Z",
+  "total_signatures": 30620,
   "hash_type": "SHA256/MD5",
   "signatures": {
     "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f": "Test.EICAR.Standard-File",
@@ -30624,7 +30624,6 @@
     "6ae1890733bc70a08b6b4300608235d708ed7bb6b430844ad782e7dfb720d71b": "MalwareBazaar.Recent.20260919",
     "9d1f20e72be592e9a5ca3f5aed143cee136feb31a0d2a0aa951c95a92a74e8b5": "MalwareBazaar.Recent.20260919",
     "41ec92bc311daf40b22b2497d044b12d9ba0266da84d8581255d7cc9e059135f": "Steam.TROJEN",
-    "00304cb5604638c46a87ea2e2c72c1e29b8147d6a781fcdb3c158d92c73f0af9": "hookaping",
-    "609eb88a5e965bc3d0bcebef73ed04c58dd43309a3abb29c929ff42ecbeda5f3": "Trojan.Agent"
+    "00304cb5604638c46a87ea2e2c72c1e29b8147d6a781fcdb3c158d92c73f0af9": "hookaping"
   }
 }
